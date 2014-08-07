@@ -1,7 +1,7 @@
 'use strict';
 
 // Prefabs
-var Square = require('../prefabs/square');
+var SquareGroup = require('../prefabs/squareGroup');
 
 
 // Functions
@@ -13,11 +13,13 @@ Play.prototype = {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.physics.arcade.gravity.y = 500;
 
-        var squareGroup = this.game.add.group();
-        for (var i = 0; i < 10; i++) {
-            var square = new Square(this.game, this.game.world.randomX, this.game.world.randomY);
-            squareGroup.add(square);
-        }
+        // create and add a group to hold our squareGroup prefabs
+        this.squares = this.game.add.group();
+
+        // add a timer
+        this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 1.25, this.generateSquares, this);
+        this.squaresGenerator.timer.start();
+
         /*
         this.sprite = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'yeoman');
         this.sprite.inputEnabled = true;
@@ -33,6 +35,19 @@ Play.prototype = {
     },
     update: function () {
 
+    },
+    generateSquares: function() {
+        console.log('generating pipes!');
+        new SquareGroup(this.game, this.squares);
+
+
+        /*
+        var squareGroup = this.squares.getFirstExists(false);
+        if(!squareGroup) {
+            squareGroup = new SquareGroup(this.game, this.squares);
+        }
+        squareGroup.reset(250, 250);
+        */
     },
     clickListener: function () {
         this.game.state.start('gameover');

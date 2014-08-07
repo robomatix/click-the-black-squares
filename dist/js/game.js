@@ -15,7 +15,7 @@ window.onload = function () {
 
   game.state.start('boot');
 };
-},{"./states/boot":3,"./states/gameover":4,"./states/menu":5,"./states/play":6,"./states/preload":7}],2:[function(require,module,exports){
+},{"./states/boot":4,"./states/gameover":5,"./states/menu":6,"./states/play":7,"./states/preload":8}],2:[function(require,module,exports){
 'use strict';
 
 var Square = function(game, x, y, frame) {
@@ -43,6 +43,34 @@ module.exports = Square;
 },{}],3:[function(require,module,exports){
 'use strict';
 
+// Prefabs
+var Square = require('./square');
+
+var SquareGroup = function(game, parent) {
+  Phaser.Group.call(this, game, parent);
+
+    for (var i = 0; i < 10; i++) {
+        this.square = new Square(this.game, this.game.world.randomX, this.game.world.randomY);
+        this.add(this.square);
+    }
+    this.width = 500;
+  
+};
+
+SquareGroup.prototype = Object.create(Phaser.Group.prototype);
+SquareGroup.prototype.constructor = SquareGroup;
+
+SquareGroup.prototype.update = function() {
+  
+  // write your prefab's specific update code here
+  
+};
+
+module.exports = SquareGroup;
+
+},{"./square":2}],4:[function(require,module,exports){
+'use strict';
+
 function Boot() {
 }
 
@@ -63,7 +91,7 @@ Boot.prototype = {
 
 module.exports = Boot;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 function GameOver() {
 }
@@ -91,7 +119,7 @@ GameOver.prototype = {
 };
 module.exports = GameOver;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 function Menu() {
 }
@@ -124,11 +152,11 @@ Menu.prototype = {
 
 module.exports = Menu;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 // Prefabs
-var Square = require('../prefabs/square');
+var SquareGroup = require('../prefabs/squareGroup');
 
 
 // Functions
@@ -140,11 +168,13 @@ Play.prototype = {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.physics.arcade.gravity.y = 500;
 
-        var squareGroup = this.game.add.group();
-        for (var i = 0; i < 10; i++) {
-            var square = new Square(this.game, this.game.world.randomX, this.game.world.randomY);
-            squareGroup.add(square);
-        }
+        // create and add a group to hold our squareGroup prefabs
+        this.squares = this.game.add.group();
+
+        // add a timer
+        this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 1.25, this.generateSquares, this);
+        this.squaresGenerator.timer.start();
+
         /*
         this.sprite = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'yeoman');
         this.sprite.inputEnabled = true;
@@ -161,13 +191,26 @@ Play.prototype = {
     update: function () {
 
     },
+    generateSquares: function() {
+        console.log('generating pipes!');
+        new SquareGroup(this.game, this.squares);
+
+
+        /*
+        var squareGroup = this.squares.getFirstExists(false);
+        if(!squareGroup) {
+            squareGroup = new SquareGroup(this.game, this.squares);
+        }
+        squareGroup.reset(250, 250);
+        */
+    },
     clickListener: function () {
         this.game.state.start('gameover');
     }
 };
 
 module.exports = Play;
-},{"../prefabs/square":2}],7:[function(require,module,exports){
+},{"../prefabs/squareGroup":3}],8:[function(require,module,exports){
 'use strict';
 function Preload() {
     this.asset = null;

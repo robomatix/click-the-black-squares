@@ -107,6 +107,7 @@ function Play() {
 Play.prototype = {
     create: function () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
+        /*
         this.sprite = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'yeoman');
         this.sprite.inputEnabled = true;
 
@@ -117,6 +118,7 @@ Play.prototype = {
         this.sprite.body.velocity.y = this.game.rnd.integerInRange(-500, 500);
 
         this.sprite.events.onInputDown.add(this.clickListener, this);
+        */
     },
     update: function () {
 
@@ -141,7 +143,7 @@ Preload.prototype = {
 
         this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
         this.load.setPreloadSprite(this.asset);
-        this.load.image('yeoman', 'assets/yeoman-logo.png');
+        this.load.spritesheet('square', 'assets/black-orange-square-10.png',10,10,2);
 
     },
     create: function () {

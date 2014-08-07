@@ -12,10 +12,12 @@ Play.prototype = {
         // Set the physic system
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.physics.arcade.gravity.y = 500;
-        // Create a new bird object
-        this.square = new Square(this.game, 100, this.game.height/2);
-        // and add it to the game
-        this.game.add.existing(this.square);
+
+        var squareGroup = this.game.add.group();
+        for (var i = 0; i < 10; i++) {
+            var square = new Square(this.game, this.game.world.randomX, this.game.world.randomY);
+            squareGroup.add(square);
+        }
         /*
         this.sprite = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'yeoman');
         this.sprite.inputEnabled = true;

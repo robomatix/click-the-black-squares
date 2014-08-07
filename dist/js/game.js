@@ -15,7 +15,32 @@ window.onload = function () {
 
   game.state.start('boot');
 };
-},{"./states/boot":2,"./states/gameover":3,"./states/menu":4,"./states/play":5,"./states/preload":6}],2:[function(require,module,exports){
+},{"./states/boot":3,"./states/gameover":4,"./states/menu":5,"./states/play":6,"./states/preload":7}],2:[function(require,module,exports){
+'use strict';
+
+var Square = function(game, x, y, frame) {
+  Phaser.Sprite.call(this, game, x, y, 'square', frame);
+
+    // set the sprite's anchor to the center
+    this.anchor.setTo(0.5, 0.5);
+
+    // Add physic body
+    this.game.physics.arcade.enableBody(this);
+  
+};
+
+Square.prototype = Object.create(Phaser.Sprite.prototype);
+Square.prototype.constructor = Square;
+
+Square.prototype.update = function() {
+  
+  // write your prefab's specific update code here
+  
+};
+
+module.exports = Square;
+
+},{}],3:[function(require,module,exports){
 'use strict';
 
 function Boot() {
@@ -28,9 +53,8 @@ Boot.prototype = {
     create: function () {
         this.game.input.maxPointers = 1;
 
-        // Set a background color and the physic system
+        // Set a background color
         this.game.stage.backgroundColor = '#FFFFCC';
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         // Start the preload state
         this.game.state.start('preload');
@@ -39,7 +63,7 @@ Boot.prototype = {
 
 module.exports = Boot;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 function GameOver() {
 }
@@ -67,7 +91,7 @@ GameOver.prototype = {
 };
 module.exports = GameOver;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 function Menu() {
 }
@@ -100,13 +124,25 @@ Menu.prototype = {
 
 module.exports = Menu;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
+
+// Prefabs
+var Square = require('../prefabs/square');
+
+
+// Functions
 function Play() {
 }
 Play.prototype = {
     create: function () {
+        // Set the physic system
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
+        this.game.physics.arcade.gravity.y = 500;
+        // Create a new bird object
+        this.square = new Square(this.game, 100, this.game.height/2);
+        // and add it to the game
+        this.game.add.existing(this.square);
         /*
         this.sprite = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'yeoman');
         this.sprite.inputEnabled = true;
@@ -129,7 +165,7 @@ Play.prototype = {
 };
 
 module.exports = Play;
-},{}],6:[function(require,module,exports){
+},{"../prefabs/square":2}],7:[function(require,module,exports){
 'use strict';
 function Preload() {
     this.asset = null;

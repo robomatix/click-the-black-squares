@@ -11,7 +11,7 @@ Play.prototype = {
     create: function () {
         // Set the physic system
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.physics.arcade.gravity.y = 333;
+        this.game.physics.arcade.gravity.y = -500;
 
         // create and add a group to hold our squareGroup prefabs
         this.squares = this.game.add.group();
@@ -37,14 +37,12 @@ Play.prototype = {
 
     },
     generateSquares: function() {
-        console.log('generating pipes!');
 
-
-        var squareGroupx = this.squares.getFirstExists(false);
-        if (!squareGroupx) {
-            squareGroupx = new SquareGroup(this.game, this.squares);
+        var squareGroup = this.squares.getFirstExists(false);
+        if (!squareGroup) {
+            squareGroup = new SquareGroup(this.game, this.squares);
         }
-        squareGroupx.reset(0, 0);
+        squareGroup.reset(0, 0);
 
     },
     clickListener: function () {

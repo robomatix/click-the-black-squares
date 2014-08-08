@@ -21,11 +21,11 @@ window.onload = function () {
 var Square = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'square', frame);
 
-    // set the sprite's anchor to the center
-    this.anchor.setTo(0.5, 0.5);
-
     // Add physic body
     this.game.physics.arcade.enableBody(this);
+    // Kill the sprite if out of the world
+    this.checkWorldBounds = true;
+    this.outOfBoundsKill = true;
   
 };
 
@@ -37,7 +37,9 @@ Square.prototype.update = function() {
   // write your prefab's specific update code here
   
 };
-
+Square.prototype.goUp = function(velocityY) {
+    this.body.velocity.y = -velocityY;
+};
 module.exports = Square;
 
 },{}],3:[function(require,module,exports){
@@ -49,8 +51,10 @@ var Square = require('./square');
 var SquareGroup = function(game, parent) {
   Phaser.Group.call(this, game, parent);
 
-    for (var i = 0; i < 10; i++) {
-        this.square = new Square(this.game, this.game.world.randomX, this.game.world.randomY);
+    for (var i = 0; i < 20; i++) {
+        var x = i*25;
+        this.square = new Square(this.game, x, 500);
+        this.square.goUp(888);
         this.add(this.square);
     }
     this.width = 500;
@@ -67,16 +71,8 @@ SquareGroup.prototype.update = function() {
 };
 
 SquareGroup.prototype.reset = function(x, y) {
-
     this.x = x;
     this.y = y;
-
-
-
-    // Step 5
-    //this.hasScored = false;
-
-    // Step 6
     this.exists = true;
 };
 
@@ -180,7 +176,7 @@ Play.prototype = {
     create: function () {
         // Set the physic system
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.physics.arcade.gravity.y = 333;
+        this.game.physics.arcade.gravity.y = -500;
 
         // create and add a group to hold our squareGroup prefabs
         this.squares = this.game.add.group();
@@ -206,14 +202,12 @@ Play.prototype = {
 
     },
     generateSquares: function() {
-        console.log('generating pipes!');
 
-
-        var squareGroupx = this.squares.getFirstExists(false);
-        if (!squareGroupx) {
-            squareGroupx = new SquareGroup(this.game, this.squares);
+        var squareGroup = this.squares.getFirstExists(false);
+        if (!squareGroup) {
+            squareGroup = new SquareGroup(this.game, this.squares);
         }
-        squareGroupx.reset(0, 0);
+        squareGroup.reset(0, 0);
 
     },
     clickListener: function () {
@@ -236,7 +230,7 @@ Preload.prototype = {
 
         this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
         this.load.setPreloadSprite(this.asset);
-        this.load.spritesheet('square', 'assets/black-orange-square-10.png',10,10,2);
+        this.load.image('square', 'assets/black-square.png');
 
     },
     create: function () {

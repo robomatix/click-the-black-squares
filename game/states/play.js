@@ -11,7 +11,7 @@ Play.prototype = {
     create: function () {
         // Set the physic system
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.physics.arcade.gravity.y = -500;
+        this.game.physics.arcade.gravity.y = -100;
 
         // create and add a group to hold our squareGroup prefabs
         this.squares = this.game.add.group();

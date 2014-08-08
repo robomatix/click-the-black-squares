@@ -53,8 +53,9 @@ var SquareGroup = function(game, parent) {
 
     for (var i = 0; i < 20; i++) {
         var x = i*25;
+        var velocitY = this.game.rnd.integerInRange(1, 100);
         this.square = new Square(this.game, x, 500);
-        this.square.goUp(888);
+        this.square.goUp(velocitY);
         this.add(this.square);
     }
     this.width = 500;
@@ -176,7 +177,7 @@ Play.prototype = {
     create: function () {
         // Set the physic system
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.physics.arcade.gravity.y = -500;
+        this.game.physics.arcade.gravity.y = -100;
 
         // create and add a group to hold our squareGroup prefabs
         this.squares = this.game.add.group();

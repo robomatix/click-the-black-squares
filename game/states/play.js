@@ -11,13 +11,13 @@ Play.prototype = {
     create: function () {
         // Set the physic system
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.physics.arcade.gravity.y = 500;
+        this.game.physics.arcade.gravity.y = 333;
 
         // create and add a group to hold our squareGroup prefabs
         this.squares = this.game.add.group();
 
         // add a timer
-        this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 1.25, this.generateSquares, this);
+        this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 2, this.generateSquares, this);
         this.squaresGenerator.timer.start();
 
         /*
@@ -38,16 +38,14 @@ Play.prototype = {
     },
     generateSquares: function() {
         console.log('generating pipes!');
-        new SquareGroup(this.game, this.squares);
 
 
-        /*
-        var squareGroup = this.squares.getFirstExists(false);
-        if(!squareGroup) {
-            squareGroup = new SquareGroup(this.game, this.squares);
+        var squareGroupx = this.squares.getFirstExists(false);
+        if (!squareGroupx) {
+            squareGroupx = new SquareGroup(this.game, this.squares);
         }
-        squareGroup.reset(250, 250);
-        */
+        squareGroupx.reset(0, 0);
+
     },
     clickListener: function () {
         this.game.state.start('gameover');

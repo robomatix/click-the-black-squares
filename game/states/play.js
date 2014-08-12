@@ -20,20 +20,11 @@ Play.prototype = {
         this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 2, this.generateSquares, this);
         this.squaresGenerator.timer.start();
 
-        /*
-        this.sprite = this.game.add.sprite(this.game.width / 2, this.game.height / 2, 'yeoman');
-        this.sprite.inputEnabled = true;
-
-        this.game.physics.arcade.enable(this.sprite);
-        this.sprite.body.collideWorldBounds = true;
-        this.sprite.body.bounce.setTo(1, 1);
-        this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500, 500);
-        this.sprite.body.velocity.y = this.game.rnd.integerInRange(-500, 500);
-
-        this.sprite.events.onInputDown.add(this.clickListener, this);
-        */
     },
     update: function () {
+        this.squares.forEachDead(function (squareGroup) {
+            this.checkScore();
+        }, this);
 
     },
     generateSquares: function() {
@@ -45,9 +36,10 @@ Play.prototype = {
         squareGroup.reset(0, 0);
 
     },
-    clickListener: function () {
-        this.game.state.start('gameover');
+    checkScore: function () {
+        console.log('dead');
     }
+
 };
 
 module.exports = Play;

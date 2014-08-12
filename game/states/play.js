@@ -10,6 +10,9 @@ function Play() {
 Play.prototype = {
     create: function () {
 
+        // Set the background color
+        this.game.stage.backgroundColor = '#FFFFCC';
+
         /* Set the physic system
          ******************************/
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -18,7 +21,7 @@ Play.prototype = {
         /* Initialise emitters
          ******************************/
 
-        // Init emitter for square explosions
+        // Init emitter for square-bv explosions
         this.game.explosionEmitter = this.game.add.emitter(0, 0, 888);
         this.game.explosionEmitter.makeParticles('square');
         this.game.explosionEmitter.setYSpeed(-250, 250);

@@ -30,7 +30,7 @@ Square = function (game, x, y, frame) {
     this.checkWorldBounds = true;
     this.outOfBoundsKill = true;
 
-    // To detect click on the square
+    // To detect click on the square-bv
     this.inputEnabled = true;
     this.events.onInputDown.add(this.clicked, this);
 
@@ -81,7 +81,7 @@ SquareGroup = function (game, parent) {
         var x = i * 50;
         var velocityY = this.game.rnd.integerInRange(1, 88);
 
-        // Add a square with some properties
+        // Add a square-bv with some properties
         this.square = new Square(this.game, x, 500);
         this.square.scale.setTo(2, 2);
         this.square.goUp(velocityY);
@@ -122,7 +122,7 @@ Boot.prototype = {
         this.game.input.maxPointers = 1;
 
         // Set a background color
-        this.game.stage.backgroundColor = '#FFFFCC';
+        this.game.stage.backgroundColor = '#000000';
 
         // Start the preload state
         this.game.state.start('preload');
@@ -169,19 +169,16 @@ Menu.prototype = {
 
     },
     create: function () {
-        var style = { font: '65px Arial', fill: '#000', align: 'center'};
-        this.sprite = this.game.add.sprite(this.game.world.centerX, 138, 'yeoman');
-        this.sprite.anchor.setTo(0.5, 0.5);
+        ;
+        // Title
+        this.titleText = this.game.add.bitmapText(10, 500, 'fontSquareBV', 'CLICK THE BLACK SQUARES', 40);
+        this.game.add.tween(this.titleText).to({y: 10}, 1000).easing(Phaser.Easing.Bounce.Out).start();
 
 
-        this.titleText = this.game.add.text(this.game.world.centerX, 300, '\'Allo, \'Allo!', style);
-        this.titleText.anchor.setTo(0.5, 0.5);
 
         this.instructionsText = this.game.add.text(this.game.world.centerX, 400, 'Click anywhere to play "Click The Yeoman Logo"', { font: '16px Arial', fill: '#000', align: 'center'});
         this.instructionsText.anchor.setTo(0.5, 0.5);
 
-        this.sprite.angle = -20;
-        this.game.add.tween(this.sprite).to({angle: 20}, 1000, Phaser.Easing.Linear.NONE, true, 0, 1000, true);
     },
     update: function () {
         if (this.game.input.activePointer.justPressed()) {
@@ -205,6 +202,9 @@ function Play() {
 Play.prototype = {
     create: function () {
 
+        // Set the background color
+        this.game.stage.backgroundColor = '#FFFFCC';
+
         /* Set the physic system
          ******************************/
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -213,7 +213,7 @@ Play.prototype = {
         /* Initialise emitters
          ******************************/
 
-        // Init emitter for square explosions
+        // Init emitter for square-bv explosions
         this.game.explosionEmitter = this.game.add.emitter(0, 0, 888);
         this.game.explosionEmitter.makeParticles('square');
         this.game.explosionEmitter.setYSpeed(-250, 250);
@@ -299,7 +299,14 @@ Preload.prototype = {
         this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
         this.load.setPreloadSprite(this.asset);
 
+        // BitmapFont
+        this.load.bitmapFont('fontSquareBV', 'assets/fonts/square-bv/font.png', 'assets/fonts/square-bv/font.fnt');
+        this.load.bitmapFont('fontSquareBB', 'assets/fonts/square-bb/font.png', 'assets/fonts/square-bb/font.fnt');
+
+        // Images
         this.load.image('square', 'assets/black-square.png');
+
+        // Audio
         this.load.audio('clickBlackSquare', ['assets/on-click-1.ogg', 'assets/on-click-1.mp3']);
 
     },

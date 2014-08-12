@@ -12,7 +12,7 @@ Square = function (game, x, y, frame) {
     this.checkWorldBounds = true;
     this.outOfBoundsKill = true;
 
-    // To detect click on the square
+    // To detect click on the square-bv
     this.inputEnabled = true;
     this.events.onInputDown.add(this.clicked, this);
 

@@ -41,7 +41,6 @@ Square.prototype.goUp = function (velocityY) {
 Square.prototype.clicked = function () {
 
     this.hasBeenclicked = true;
-    this.alpha = 0;// If it's killed it seems not possible to get hasScored and hasBeenclicked
 
 }
 

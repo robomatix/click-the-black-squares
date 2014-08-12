@@ -13,6 +13,7 @@ Preload.prototype = {
         this.load.setPreloadSprite(this.asset);
 
         this.load.image('square', 'assets/black-square.png');
+        this.load.audio('clickBlackSquare', ['assets/on-click-1.ogg', 'assets/on-click-1.mp3']);
 
     },
     create: function () {

@@ -59,7 +59,6 @@ Square.prototype.goUp = function (velocityY) {
 Square.prototype.clicked = function () {
 
     this.hasBeenclicked = true;
-    this.alpha = 0;// If it's killed it seems not possible to get hasScored and hasBeenclicked
 
 }
 
@@ -76,14 +75,15 @@ var SquareGroup;
 SquareGroup = function (game, parent) {
     Phaser.Group.call(this, game, parent);
 
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 10; i++) {
 
         // Some variables
-        var x = i * 25;
+        var x = i * 50;
         var velocityY = this.game.rnd.integerInRange(1, 88);
 
         // Add a square with some properties
         this.square = new Square(this.game, x, 500);
+        this.square.scale.setTo(2, 2);
         this.square.goUp(velocityY);
         this.add(this.square);
     }
@@ -231,6 +231,11 @@ Play.prototype = {
         this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 2, this.generateSquares, this);
         this.squaresGenerator.timer.start();
 
+        /* Add sound
+         ********************/
+        this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
+
+
     },
     update: function () {
 
@@ -251,10 +256,10 @@ Play.prototype = {
 
     },
     checkScoreGroup: function (squareGroup) {
-        squareGroup.forEachExists(this.checkClickedE, squareGroup);
+        squareGroup.forEachExists(this.checkClicked, squareGroup);
 
     },
-    checkClickedE: function (sprite) {
+    checkClicked: function (sprite) {
 
         if (sprite.hasBeenclicked && !sprite.hasScored) {
 
@@ -263,8 +268,15 @@ Play.prototype = {
             this.game.explosionEmitter.y = sprite.y;
             this.game.explosionEmitter.start(true, 7777, null, 18);
 
+            // Sound
+            this.game.clickBlackSquareSound.play();
+
+            // Hide it
+            sprite.alpha = 0;// If it's killed it seems not possible to get hasScored and hasBeenclicked
+
+            // Score
             sprite.hasScored = true;
-    }
+        }
 
 
     }
@@ -288,6 +300,7 @@ Preload.prototype = {
         this.load.setPreloadSprite(this.asset);
 
         this.load.image('square', 'assets/black-square.png');
+        this.load.audio('clickBlackSquare', ['assets/on-click-1.ogg', 'assets/on-click-1.mp3']);
 
     },
     create: function () {

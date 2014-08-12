@@ -8,14 +8,15 @@ var SquareGroup;
 SquareGroup = function (game, parent) {
     Phaser.Group.call(this, game, parent);
 
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 10; i++) {
 
         // Some variables
-        var x = i * 25;
+        var x = i * 50;
         var velocityY = this.game.rnd.integerInRange(1, 88);
 
         // Add a square with some properties
         this.square = new Square(this.game, x, 500);
+        this.square.scale.setTo(2, 2);
         this.square.goUp(velocityY);
         this.add(this.square);
     }

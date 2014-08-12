@@ -36,6 +36,11 @@ Play.prototype = {
         this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 2, this.generateSquares, this);
         this.squaresGenerator.timer.start();
 
+        /* Add sound
+         ********************/
+        this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
+
+
     },
     update: function () {
 
@@ -56,10 +61,10 @@ Play.prototype = {
 
     },
     checkScoreGroup: function (squareGroup) {
-        squareGroup.forEachExists(this.checkClickedE, squareGroup);
+        squareGroup.forEachExists(this.checkClicked, squareGroup);
 
     },
-    checkClickedE: function (sprite) {
+    checkClicked: function (sprite) {
 
         if (sprite.hasBeenclicked && !sprite.hasScored) {
 
@@ -68,8 +73,15 @@ Play.prototype = {
             this.game.explosionEmitter.y = sprite.y;
             this.game.explosionEmitter.start(true, 7777, null, 18);
 
+            // Sound
+            this.game.clickBlackSquareSound.play();
+
+            // Hide it
+            sprite.alpha = 0;// If it's killed it seems not possible to get hasScored and hasBeenclicked
+
+            // Score
             sprite.hasScored = true;
-    }
+        }
 
 
     }

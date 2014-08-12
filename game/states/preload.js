@@ -14,7 +14,9 @@ Preload.prototype = {
 
         // BitmapFont
         this.load.bitmapFont('fontSquareBV', 'assets/fonts/square-bv/font.png', 'assets/fonts/square-bv/font.fnt');
+        this.load.bitmapFont('fontSquareDigitBV', 'assets/fonts/square-digit-bv/font.png', 'assets/fonts/square-digit-bv/font.fnt');
         this.load.bitmapFont('fontSquareBB', 'assets/fonts/square-bb/font.png', 'assets/fonts/square-bb/font.fnt');
+
 
         // Button
         this.game.load.spritesheet('startBtn', 'assets/btn-go.png', 50, 50);

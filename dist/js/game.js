@@ -221,10 +221,15 @@ function Play() {
 }
 Play.prototype = {
     create: function () {
-        console.log(this.game.gameDuration);
 
-        // Set the background color
+        /* Set the background color
+         ******************************/
         this.game.stage.backgroundColor = '#FFFFCC';
+
+        /* Some Variables
+         ********************/
+        this.totalDuration = 13;
+        this.CountdownDisplay = this.totalDuration;
 
         /* Set the physic system
          ******************************/
@@ -243,13 +248,17 @@ Play.prototype = {
         this.game.explosionEmitter.maxParticleScale = 0.5;
         this.game.explosionEmitter.gravity = 0;
 
+        /* Display countdown
+         ******************************************************/
+        this.CountdownDisplayText = this.game.add.bitmapText(10, 10, 'fontSquareDigitBV', this.CountdownDisplay.toString(), 44);
+
         /* Create and add a group to hold our squareGroup prefabs
          ******************************************************/
         this.squares = this.game.add.group();
 
-        /* add a timer
+        /* add a timer to generate black squares
          ******************************************************/
-        this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 2, this.generateSquares, this);
+        this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.generateSquaresAndCountdown, this);
         this.squaresGenerator.timer.start();
 
         /* Add sound
@@ -264,8 +273,6 @@ Play.prototype = {
         this.squares.forEach(function (squareGroup) {
             this.checkScoreGroup(squareGroup);
         }, this);
-
-
     },
     generateSquares: function () {
 
@@ -274,6 +281,22 @@ Play.prototype = {
             squareGroup = new SquareGroup(this.game, this.squares);
         }
         squareGroup.reset(0, 0);
+
+    },
+    countDown: function () {
+
+        this.CountdownDisplayToString = this.CountdownDisplay.toString();
+        if (this.CountdownDisplay < 10) {
+            this.CountdownDisplayToString = "0" + this.CountdownDisplayToString;
+        }
+        this.CountdownDisplayText.setText(this.CountdownDisplayToString);
+        this.CountdownDisplay--;
+
+    },
+    generateSquaresAndCountdown: function () {
+
+        this.generateSquares();
+        this.countDown();
 
     },
     checkScoreGroup: function (squareGroup) {
@@ -322,7 +345,9 @@ Preload.prototype = {
 
         // BitmapFont
         this.load.bitmapFont('fontSquareBV', 'assets/fonts/square-bv/font.png', 'assets/fonts/square-bv/font.fnt');
+        this.load.bitmapFont('fontSquareDigitBV', 'assets/fonts/square-digit-bv/font.png', 'assets/fonts/square-digit-bv/font.fnt');
         this.load.bitmapFont('fontSquareBB', 'assets/fonts/square-bb/font.png', 'assets/fonts/square-bb/font.fnt');
+
 
         // Button
         this.game.load.spritesheet('startBtn', 'assets/btn-go.png', 50, 50);

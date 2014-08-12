@@ -12,7 +12,7 @@ SquareGroup = function (game, parent) {
 
         // Some variables
         var x = i * 25;
-        var velocityY = this.game.rnd.integerInRange(1, 100);
+        var velocityY = this.game.rnd.integerInRange(1, 88);
 
         // Add a square with some properties
         this.square = new Square(this.game, x, 500);

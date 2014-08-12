@@ -13,13 +13,13 @@ Play.prototype = {
         /* Set the physic system
          ******************************/
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.physics.arcade.gravity.y = -100;
+        this.game.physics.arcade.gravity.y = -88;
 
         /* Initialise emitters
          ******************************/
 
         // Init emitter for square explosions
-        this.game.explosionEmitter = this.game.add.emitter(0, 0, 88);
+        this.game.explosionEmitter = this.game.add.emitter(0, 0, 888);
         this.game.explosionEmitter.makeParticles('square');
         this.game.explosionEmitter.setYSpeed(-250, 250);
         this.game.explosionEmitter.setXSpeed(-250, 250);

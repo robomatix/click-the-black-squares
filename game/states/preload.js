@@ -12,7 +12,6 @@ Preload.prototype = {
         this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
         this.load.setPreloadSprite(this.asset);
 
-        this.load.image('pixel', 'assets/pixel.png');
         this.load.image('square', 'assets/black-square.png');
 
     },

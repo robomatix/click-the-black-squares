@@ -18,11 +18,14 @@ window.onload = function () {
 },{"./states/boot":4,"./states/gameover":5,"./states/menu":6,"./states/play":7,"./states/preload":8}],2:[function(require,module,exports){
 'use strict';
 
-var Square = function (game, x, y, frame) {
+var Square;
+
+Square = function (game, x, y, frame) {
     Phaser.Sprite.call(this, game, x, y, 'square', frame);
 
     // Add physic body
     this.game.physics.arcade.enableBody(this);
+
     // Kill the sprite if out of the world
     this.checkWorldBounds = true;
     this.outOfBoundsKill = true;
@@ -30,6 +33,11 @@ var Square = function (game, x, y, frame) {
     // To detect click on the square
     this.inputEnabled = true;
     this.events.onInputDown.add(this.clicked, this);
+
+    // Some variables
+    this.hasScored = false;
+    this.hasBeenclicked = false;
+
 
 };
 
@@ -43,13 +51,17 @@ Square.prototype.update = function () {
 };
 
 Square.prototype.goUp = function (velocityY) {
+
     this.body.velocity.y = -velocityY;
+
 };
 
 Square.prototype.clicked = function () {
-    this.kill();
-}
 
+    this.hasBeenclicked = true;
+    this.alpha = 0;// If it's killed it seems not possible to get hasScored and hasBeenclicked
+
+}
 
 module.exports = Square;
 
@@ -59,17 +71,20 @@ module.exports = Square;
 // Prefabs
 var Square = require('./square');
 
-var SquareGroup = function (game, parent) {
+var SquareGroup;
+
+SquareGroup = function (game, parent) {
     Phaser.Group.call(this, game, parent);
 
     for (var i = 0; i < 20; i++) {
+
+        // Some variables
         var x = i * 25;
         var velocityY = this.game.rnd.integerInRange(1, 100);
+
+        // Add a square with some properties
         this.square = new Square(this.game, x, 500);
         this.square.goUp(velocityY);
-        // To detect click on the square
-        //this.square.inputEnabled = true;
-        //this.square.events.onInputDown.add(this.square.clicked, this);
         this.add(this.square);
     }
     this.width = 500;
@@ -189,25 +204,44 @@ function Play() {
 }
 Play.prototype = {
     create: function () {
-        // Set the physic system
+
+        /* Set the physic system
+         ******************************/
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.physics.arcade.gravity.y = -100;
 
-        // create and add a group to hold our squareGroup prefabs
+        /* Initialise emitters
+         ******************************/
+
+        // Init emitter for square explosions
+        this.game.explosionEmitter = this.game.add.emitter(0, 0, 88);
+        this.game.explosionEmitter.makeParticles('square');
+        this.game.explosionEmitter.setYSpeed(-250, 250);
+        this.game.explosionEmitter.setXSpeed(-250, 250);
+        this.game.explosionEmitter.minParticleScale = 0.2;
+        this.game.explosionEmitter.maxParticleScale = 0.5;
+        this.game.explosionEmitter.gravity = 0;
+
+        /* Create and add a group to hold our squareGroup prefabs
+         ******************************************************/
         this.squares = this.game.add.group();
 
-        // add a timer
+        /* add a timer
+         ******************************************************/
         this.squaresGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 2, this.generateSquares, this);
         this.squaresGenerator.timer.start();
 
     },
     update: function () {
-        this.squares.forEachDead(function (squareGroup) {
-            this.checkScore();
+
+
+        this.squares.forEach(function (squareGroup) {
+            this.checkScoreGroup(squareGroup);
         }, this);
 
+
     },
-    generateSquares: function() {
+    generateSquares: function () {
 
         var squareGroup = this.squares.getFirstExists(false);
         if (!squareGroup) {
@@ -216,8 +250,23 @@ Play.prototype = {
         squareGroup.reset(0, 0);
 
     },
-    checkScore: function () {
-        console.log('dead');
+    checkScoreGroup: function (squareGroup) {
+        squareGroup.forEachExists(this.checkClickedE, squareGroup);
+
+    },
+    checkClickedE: function (sprite) {
+
+        if (sprite.hasBeenclicked && !sprite.hasScored) {
+
+            // Emit particles
+            this.game.explosionEmitter.x = sprite.x;
+            this.game.explosionEmitter.y = sprite.y;
+            this.game.explosionEmitter.start(true, 7777, null, 18);
+
+            sprite.hasScored = true;
+    }
+
+
     }
 
 };
@@ -238,7 +287,6 @@ Preload.prototype = {
         this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
         this.load.setPreloadSprite(this.asset);
 
-        this.load.image('pixel', 'assets/pixel.png');
         this.load.image('square', 'assets/black-square.png');
 
     },

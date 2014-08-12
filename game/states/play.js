@@ -9,6 +9,7 @@ function Play() {
 }
 Play.prototype = {
     create: function () {
+        console.log(this.game.gameDuration);
 
         // Set the background color
         this.game.stage.backgroundColor = '#FFFFCC';

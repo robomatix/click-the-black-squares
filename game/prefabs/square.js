@@ -19,6 +19,7 @@ Square = function (game, x, y, frame) {
     // Some variables
     this.hasScored = false;
     this.hasBeenclicked = false;
+    this.credit = 0;
 
 
 };

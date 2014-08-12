@@ -18,6 +18,7 @@ Play.prototype = {
          ********************/
         this.totalDuration = 13;
         this.CountdownDisplay = this.totalDuration;
+        this.game.score = 0;
 
         /* Set the physic system
          ******************************/
@@ -39,6 +40,7 @@ Play.prototype = {
         /* Display countdown
          ******************************************************/
         this.CountdownDisplayText = this.game.add.bitmapText(10, 10, 'fontSquareDigitBV', this.CountdownDisplay.toString(), 44);
+        this.game.scoreText = this.game.add.bitmapText(440, 10, 'fontSquareDigitBV', this.game.score.toString(), 44);
 
         /* Create and add a group to hold our squareGroup prefabs
          ******************************************************/
@@ -107,6 +109,8 @@ Play.prototype = {
             sprite.alpha = 0;// If it's killed it seems not possible to get hasScored and hasBeenclicked
 
             // Score
+            this.game.score = this.game.score + sprite.credit;
+            this.game.scoreText.setText(this.game.score.toString());
             sprite.hasScored = true;
         }
 

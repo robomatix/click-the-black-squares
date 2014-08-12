@@ -18,6 +18,7 @@ SquareGroup = function (game, parent) {
         this.square = new Square(this.game, x, 500);
         this.square.scale.setTo(2, 2);
         this.square.goUp(velocityY);
+        this.square.credit = this.game.rnd.integerInRange(1, 10);
         this.add(this.square);
     }
     this.width = 500;

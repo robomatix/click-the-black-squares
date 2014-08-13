@@ -139,6 +139,9 @@ Play.prototype = {
                 // Fallback. LocalStorage isn't available
                 this.game.bestScore = 'N/A';
             }
+
+            // Display earned credits
+            sprite.displayCredit(sprite.credit, sprite.x, sprite.y);
         }
 
 

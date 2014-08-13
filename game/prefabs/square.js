@@ -20,6 +20,7 @@ Square = function (game, x, y, frame) {
     this.hasScored = false;
     this.hasBeenclicked = false;
     this.credit = 0;
+    this.creditString = "";
 
 
 };
@@ -38,6 +39,13 @@ Square.prototype.goUp = function (velocityY) {
     this.body.velocity.y = -velocityY;
 
 };
+Square.prototype.displayCredit = function (credit, x, y) {
+
+    this.creditString = "+" + credit.toString();
+    this.textCredit = this.game.add.bitmapText(x, y, 'fontSquareBV', this.creditString, 44);
+    this.game.add.tween(this.textCredit).to({ alpha: 0 }, 250, Phaser.Easing.Linear.None, true, 250);
+
+}
 
 Square.prototype.clicked = function () {
 

@@ -30,6 +30,9 @@ Preload.prototype = {
         // Audio
         this.load.audio('clickBlackSquare', ['assets/on-click-1.ogg', 'assets/on-click-1.mp3']);
         this.load.audio('onEndGame', ['assets/on-end-game.ogg', 'assets/on-end-game.mp3']);
+        this.load.audio('onTweenEndGame', ['assets/on-tween-end-game.ogg', 'assets/on-tween-end-game.mp3']);
+
+
 
     },
     create: function () {

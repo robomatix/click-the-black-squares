@@ -29,7 +29,7 @@ GameOver.prototype = {
         this.scoreText = this.game.add.bitmapText(10, 500, 'fontSquareBB', this.scoreString, 44);
 
         this.tweenScore = this.game.add.tween(this.scoreText).to({y: 220}, 1000).easing(Phaser.Easing.Bounce.Out);
-        this.tweenScore.onStart.add(this.playClickBlackSquareSound, this);// Sound
+        this.tweenScore.onStart.add(this.playOnTweenEndGame, this);// Sound
         this.tweenScore.delay(1500).start();// Start
 
         // Your best score
@@ -47,7 +47,7 @@ GameOver.prototype = {
         this.button.anchor.setTo(0.5, 0.5);
 
         this.tweenButton = this.game.add.tween(this.button).to({y: 420}, 1000).easing(Phaser.Easing.Bounce.Out);
-        this.tweenButton.onStart.add(this.playClickBlackSquareSound, this);// Sound
+        this.tweenButton.onStart.add(this.playOnTweenEndGame, this);// Sound
         this.tweenButton.delay(2750).start();// Start
 
 
@@ -60,6 +60,13 @@ GameOver.prototype = {
 
         // Sound
         this.game.clickBlackSquareSound.play();
+
+
+    },
+    playOnTweenEndGame: function () {
+
+        // Sound
+        this.game.onTweenEndGame.play();
 
 
     },

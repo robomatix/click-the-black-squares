@@ -16,7 +16,7 @@ Play.prototype = {
 
         /* Some Variables
          ********************/
-        this.totalDuration = 3;
+        this.totalDuration = 33;
         this.CountdownDisplay = this.totalDuration;
         this.game.score = 0;
 
@@ -55,6 +55,7 @@ Play.prototype = {
          ********************/
         this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
         this.game.onEndGame = this.game.add.audio('onEndGame');
+        this.game.onTweenEndGame = this.game.add.audio('onTweenEndGame');
 
 
     },

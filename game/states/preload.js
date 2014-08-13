@@ -20,6 +20,9 @@ Preload.prototype = {
 
         // Button
         this.game.load.spritesheet('startBtn', 'assets/btn-go.png', 50, 50);
+        this.game.load.spritesheet('replayBtn', 'assets/btn-replay.png', 308, 58);
+
+
 
         // Images
         this.load.image('square', 'assets/black-square.png');

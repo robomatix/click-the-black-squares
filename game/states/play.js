@@ -16,7 +16,7 @@ Play.prototype = {
 
         /* Some Variables
          ********************/
-        this.totalDuration = 13;
+        this.totalDuration = 3;
         this.CountdownDisplay = this.totalDuration;
         this.game.score = 0;
 
@@ -75,11 +75,19 @@ Play.prototype = {
     },
     countDown: function () {
 
+        // Go to game over is needed
+        if (this.CountdownDisplay === 0) {
+            this.game.state.start('gameover');
+        }
+
+        // Display the score
         this.CountdownDisplayToString = this.CountdownDisplay.toString();
         if (this.CountdownDisplay < 10) {
             this.CountdownDisplayToString = "0" + this.CountdownDisplayToString;
         }
         this.CountdownDisplayText.setText(this.CountdownDisplayToString);
+
+        // Minus the countdown
         this.CountdownDisplay--;
 
     },
@@ -112,6 +120,17 @@ Play.prototype = {
             this.game.score = this.game.score + sprite.credit;
             this.game.scoreText.setText(this.game.score.toString());
             sprite.hasScored = true;
+            // Stock score and best score
+            if (!!localStorage) {
+                this.game.bestScore = localStorage.getItem('bestScore');
+                if (!this.game.bestScore || this.game.bestScore < this.game.score) {
+                    this.game.bestScore = this.game.score;
+                    localStorage.setItem('bestScore', this.game.bestScore);
+                }
+            } else {
+                // Fallback. LocalStorage isn't available
+                this.game.bestScore = 'N/A';
+            }
         }
 
 

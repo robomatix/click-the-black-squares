@@ -39,7 +39,7 @@ GameOver.prototype = {
 
 
         // Pitch
-        this.pitchText = this.game.add.bitmapText(155, 500, 'fontSquareBB', 'THIRTEEN SECONDS !!!', 22);
+        this.pitchText = this.game.add.bitmapText(120, 500, 'fontSquareBB', 'THIRTY THREE SECONDS !!!', 22);
         this.game.add.tween(this.pitchText).to({y: 350}, 1000).easing(Phaser.Easing.Bounce.Out).delay(2500).start();
 
         // Button

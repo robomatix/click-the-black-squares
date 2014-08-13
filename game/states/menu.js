@@ -28,7 +28,9 @@ Menu.prototype = {
 
         /* Add sound
          ********************/
+        this.game.onStartGame = this.game.add.audio('onStartGame');
         this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
+
 
     },
 
@@ -39,7 +41,7 @@ Menu.prototype = {
     actionOnClickStartButton: function (btn) {
 
         // Sound
-        this.game.clickBlackSquareSound.play();
+        this.game.onStartGame.play();
 
         // Go to the actual game
         this.game.state.start('play');

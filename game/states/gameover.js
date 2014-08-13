@@ -73,7 +73,7 @@ GameOver.prototype = {
     actionOnClickStartButton: function (btn) {
 
         // Sound
-        this.playClickBlackSquareSound();
+        this.game.onStartGame.play();
 
         // Go to the actual game
         this.game.state.start('play');

@@ -54,6 +54,7 @@ Play.prototype = {
         /* Add sound
          ********************/
         this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
+        this.game.onEndGame = this.game.add.audio('onEndGame');
 
 
     },
@@ -77,7 +78,13 @@ Play.prototype = {
 
         // Go to game over is needed
         if (this.CountdownDisplay === 0) {
+
+            // Sound
+            this.game.onEndGame.play();
+
+            // Go to Game Over state
             this.game.state.start('gameover');
+
         }
 
         // Display the score

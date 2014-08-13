@@ -163,7 +163,10 @@ GameOver.prototype = {
         // Score
         this.scoreString = "SCORE : " + this.game.score.toString();
         this.scoreText = this.game.add.bitmapText(10, 500, 'fontSquareBB', this.scoreString, 44);
-        this.game.add.tween(this.scoreText).to({y: 220}, 1000).easing(Phaser.Easing.Bounce.Out).delay(1500).start();
+
+        this.tweenScore = this.game.add.tween(this.scoreText).to({y: 220}, 1000).easing(Phaser.Easing.Bounce.Out);
+        this.tweenScore.onStart.add(this.playClickBlackSquareSound, this);// Sound
+        this.tweenScore.delay(1500).start();// Start
 
         // Your best score
         this.bestScoreString = "BEST SCORE : " + this.game.bestScore.toString();
@@ -177,25 +180,29 @@ GameOver.prototype = {
 
         // Button
         this.button = this.game.add.button(this.game.world.centerX, 530, 'replayBtn', this.actionOnClickStartButton, this, 0, 0, 0);
-
         this.button.anchor.setTo(0.5, 0.5);
-        this.game.add.tween(this.button).to({y: 420}, 1000).easing(Phaser.Easing.Bounce.Out).delay(2750).start();
 
+        this.tweenButton = this.game.add.tween(this.button).to({y: 420}, 1000).easing(Phaser.Easing.Bounce.Out);
+        this.tweenButton.onStart.add(this.playClickBlackSquareSound, this);// Sound
+        this.tweenButton.delay(2750).start();// Start
 
-        /* Add sound
-         ********************/
-        this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
 
     },
 
     update: function () {
 
     },
-
-    actionOnClickStartButton: function (btn) {
+    playClickBlackSquareSound: function () {
 
         // Sound
         this.game.clickBlackSquareSound.play();
+
+
+    },
+    actionOnClickStartButton: function (btn) {
+
+        // Sound
+        this.playClickBlackSquareSound();
 
         // Go to the actual game
         this.game.state.start('play');
@@ -314,6 +321,7 @@ Play.prototype = {
         /* Add sound
          ********************/
         this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
+        this.game.onEndGame = this.game.add.audio('onEndGame');
 
 
     },
@@ -337,7 +345,13 @@ Play.prototype = {
 
         // Go to game over is needed
         if (this.CountdownDisplay === 0) {
+
+            // Sound
+            this.game.onEndGame.play();
+
+            // Go to Game Over state
             this.game.state.start('gameover');
+
         }
 
         // Display the score
@@ -431,6 +445,7 @@ Preload.prototype = {
 
         // Audio
         this.load.audio('clickBlackSquare', ['assets/on-click-1.ogg', 'assets/on-click-1.mp3']);
+        this.load.audio('onEndGame', ['assets/on-end-game.ogg', 'assets/on-end-game.mp3']);
 
     },
     create: function () {

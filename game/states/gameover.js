@@ -27,7 +27,10 @@ GameOver.prototype = {
         // Score
         this.scoreString = "SCORE : " + this.game.score.toString();
         this.scoreText = this.game.add.bitmapText(10, 500, 'fontSquareBB', this.scoreString, 44);
-        this.game.add.tween(this.scoreText).to({y: 220}, 1000).easing(Phaser.Easing.Bounce.Out).delay(1500).start();
+
+        this.tweenScore = this.game.add.tween(this.scoreText).to({y: 220}, 1000).easing(Phaser.Easing.Bounce.Out);
+        this.tweenScore.onStart.add(this.playClickBlackSquareSound, this);// Sound
+        this.tweenScore.delay(1500).start();// Start
 
         // Your best score
         this.bestScoreString = "BEST SCORE : " + this.game.bestScore.toString();
@@ -41,25 +44,29 @@ GameOver.prototype = {
 
         // Button
         this.button = this.game.add.button(this.game.world.centerX, 530, 'replayBtn', this.actionOnClickStartButton, this, 0, 0, 0);
-
         this.button.anchor.setTo(0.5, 0.5);
-        this.game.add.tween(this.button).to({y: 420}, 1000).easing(Phaser.Easing.Bounce.Out).delay(2750).start();
 
+        this.tweenButton = this.game.add.tween(this.button).to({y: 420}, 1000).easing(Phaser.Easing.Bounce.Out);
+        this.tweenButton.onStart.add(this.playClickBlackSquareSound, this);// Sound
+        this.tweenButton.delay(2750).start();// Start
 
-        /* Add sound
-         ********************/
-        this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
 
     },
 
     update: function () {
 
     },
-
-    actionOnClickStartButton: function (btn) {
+    playClickBlackSquareSound: function () {
 
         // Sound
         this.game.clickBlackSquareSound.play();
+
+
+    },
+    actionOnClickStartButton: function (btn) {
+
+        // Sound
+        this.playClickBlackSquareSound();
 
         // Go to the actual game
         this.game.state.start('play');

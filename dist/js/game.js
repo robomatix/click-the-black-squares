@@ -340,9 +340,12 @@ Play.prototype = {
 
         /* Add sound
          ********************/
+        this.game.onTimer1 = this.game.add.audio('onTimer1');
         this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
         this.game.onEndGame = this.game.add.audio('onEndGame');
         this.game.onTweenEndGame = this.game.add.audio('onTweenEndGame');
+        // Volume
+        this.game.onTimer1.volume = 0.1;
 
 
     },
@@ -363,6 +366,27 @@ Play.prototype = {
 
     },
     countDown: function () {
+
+        // bip every second except le last one with increasing volume
+        switch (this.CountdownDisplay) {
+            case 30:
+                this.game.onTimer1.volume = 0.3;
+                break;
+            case 20:
+                this.game.onTimer1.volume = 0.5;
+                break;
+            case 10:
+                this.game.onTimer1.volume = 0.7;
+                break;
+            case 3:
+                this.game.onTimer1.volume = 1;
+                break;
+            case 0:
+                this.game.onTimer1.volume = 0;
+                break;
+        }
+
+        this.game.onTimer1.play();
 
         // Go to game over is needed
         if (this.CountdownDisplay === 0) {
@@ -474,6 +498,7 @@ Preload.prototype = {
 
         // Audio
         this.load.audio('onStartGame', ['assets/on-start-game.ogg', 'assets/on-start-game.mp3']);
+        this.load.audio('onTimer1', ['assets/on-timer-1.ogg', 'assets/on-timer-1.mp3']);
         this.load.audio('clickBlackSquare', ['assets/on-click-1.ogg', 'assets/on-click-1.mp3']);
         this.load.audio('onEndGame', ['assets/on-end-game.ogg', 'assets/on-end-game.mp3']);
         this.load.audio('onTweenEndGame', ['assets/on-tween-end-game.ogg', 'assets/on-tween-end-game.mp3']);

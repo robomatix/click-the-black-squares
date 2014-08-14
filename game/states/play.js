@@ -53,9 +53,12 @@ Play.prototype = {
 
         /* Add sound
          ********************/
+        this.game.onTimer1 = this.game.add.audio('onTimer1');
         this.game.clickBlackSquareSound = this.game.add.audio('clickBlackSquare');
         this.game.onEndGame = this.game.add.audio('onEndGame');
         this.game.onTweenEndGame = this.game.add.audio('onTweenEndGame');
+        // Volume
+        this.game.onTimer1.volume = 0.1;
 
 
     },
@@ -76,6 +79,27 @@ Play.prototype = {
 
     },
     countDown: function () {
+
+        // bip every second except le last one with increasing volume
+        switch (this.CountdownDisplay) {
+            case 30:
+                this.game.onTimer1.volume = 0.3;
+                break;
+            case 20:
+                this.game.onTimer1.volume = 0.5;
+                break;
+            case 10:
+                this.game.onTimer1.volume = 0.7;
+                break;
+            case 3:
+                this.game.onTimer1.volume = 1;
+                break;
+            case 0:
+                this.game.onTimer1.volume = 0;
+                break;
+        }
+
+        this.game.onTimer1.play();
 
         // Go to game over is needed
         if (this.CountdownDisplay === 0) {

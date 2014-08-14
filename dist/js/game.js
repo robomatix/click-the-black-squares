@@ -432,6 +432,12 @@ Play.prototype = {
         }
 
 
+    },
+    shutdown: function () {
+        this.squares.destroy();
+        this.game.explosionEmitter.destroy();
+        this.squaresGenerator.timer.removeAll();
+
     }
 
 };

@@ -28,8 +28,8 @@ Play.prototype = {
         /* Initialise emitters
          ******************************/
 
-        // Init emitter for square-bv explosions
-        this.game.explosionEmitter = this.game.add.emitter(0, 0, 888);
+        // Init emitter for squares explosions
+        this.game.explosionEmitter = this.game.add.emitter(0, 0, 777);
         this.game.explosionEmitter.makeParticles('square');
         this.game.explosionEmitter.setYSpeed(-250, 250);
         this.game.explosionEmitter.setXSpeed(-250, 250);
@@ -116,13 +116,13 @@ Play.prototype = {
             // Emit particles
             this.game.explosionEmitter.x = sprite.x;
             this.game.explosionEmitter.y = sprite.y;
-            this.game.explosionEmitter.start(true, 7777, null, 18);
+            this.game.explosionEmitter.start(true, 777, null, 11);
 
             // Sound
             this.game.clickBlackSquareSound.play();
 
             // Hide it
-            sprite.alpha = 0;// If it's killed it seems not possible to get hasScored and hasBeenclicked
+            sprite.alpha = 0;// If it's killed it seems not possible to get hasScored and hasBeenClicked
 
             // Score
             this.game.score = this.game.score + sprite.credit;

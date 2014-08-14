@@ -8,6 +8,9 @@ Square = function (game, x, y, frame) {
     // Add physic body
     this.game.physics.arcade.enableBody(this);
 
+    //Anchor
+    this.anchor.setTo(0.5, 0.5);
+
     // Kill the sprite if out of the world
     this.checkWorldBounds = true;
     this.outOfBoundsKill = true;

@@ -15,7 +15,7 @@ SquareGroup = function (game, parent) {
         var velocityY = this.game.rnd.integerInRange(1, 88);
 
         // Add a square-bv with some properties
-        this.square = new Square(this.game, x, 500);
+        this.square = new Square(this.game, x, 525);
         this.square.scale.setTo(2, 2);
         this.square.goUp(velocityY);
         this.square.credit = this.game.rnd.integerInRange(1, 10);

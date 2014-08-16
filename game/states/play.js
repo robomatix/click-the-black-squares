@@ -154,17 +154,6 @@ Play.prototype = {
 
         if (sprite.hasBeenclicked && !sprite.hasScored) {
 
-            // Emit particles
-            this.game.explosionEmitter.x = sprite.x;
-            this.game.explosionEmitter.y = sprite.y;
-            this.game.explosionEmitter.start(true, 777, null, 11);
-
-            // Sound
-            this.game.clickBlackSquareSound.play();
-
-            // Hide it
-            sprite.alpha = 0;// If it's killed it seems not possible to get hasScored and hasBeenClicked
-
             // Score
             this.game.score = this.game.score + sprite.credit;
             this.game.scoreText.setText(this.game.score.toString());
@@ -183,6 +172,18 @@ Play.prototype = {
 
             // Display earned credits
             sprite.displayCredit(sprite.credit, sprite.x, sprite.y);
+
+            // Sound
+            this.game.clickBlackSquareSound.play();
+
+            // Emit particles
+            this.game.explosionEmitter.x = sprite.x;
+            this.game.explosionEmitter.y = sprite.y;
+            this.game.explosionEmitter.start(true, 777, null, 11);
+
+            // Kill the sprite
+            sprite.kill();
+
         }
 
 

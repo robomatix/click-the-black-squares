@@ -65,6 +65,7 @@ Square.prototype.displayCredit = function (credit, x, y) {
     this.creditString = "+" + credit.toString();
     this.textCredit = this.game.add.bitmapText(x, y, 'fontSquareBV', this.creditString, 44);
     this.game.add.tween(this.textCredit).to({ alpha: 0 }, 250, Phaser.Easing.Linear.None, true, 250);
+    this.game.add.tween(this.textCredit).to({y: y - 55}, 200, Phaser.Easing.Linear.None, true, 0);
 
 }
 

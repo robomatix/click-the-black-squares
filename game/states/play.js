@@ -39,8 +39,8 @@ Play.prototype = {
 
         /* Display countdown
          ******************************************************/
-        this.CountdownDisplayText = this.game.add.bitmapText(10, 10, 'fontSquareDigitBV', this.CountdownDisplay.toString(), 44);
-        this.game.scoreText = this.game.add.bitmapText(440, 10, 'fontSquareDigitBV', this.game.score.toString(), 44);
+        this.CountdownDisplayText = this.game.add.bitmapText(440, 10, 'fontSquareDigitBV', this.CountdownDisplay.toString(), 44);
+        this.game.scoreText = this.game.add.bitmapText(10, 10, 'fontSquareDigitBV', this.game.score.toString(), 44);
 
         /* Create and add a group to hold our squareGroup prefabs
          ******************************************************/

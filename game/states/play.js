@@ -19,6 +19,13 @@ Play.prototype = {
         this.totalDuration = 33;
         this.CountdownDisplay = this.totalDuration;
         this.game.score = 0;
+        // Best score
+        if (!!localStorage) {
+            this.game.bestScore = localStorage.getItem('bestScore');
+        } else {
+            // Fallback. LocalStorage isn't available
+            this.game.bestScore = 'N/A';
+        }
 
         /* Set the physic system
          ******************************/

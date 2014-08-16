@@ -24,7 +24,7 @@ Square = function (game, x, y, frame) {
     this.hasBeenclicked = false;
     this.credit = 0;
     this.creditString = "";
-    this.thisyTo = 0;
+    this.thisYTo = 0;
 
 
 };

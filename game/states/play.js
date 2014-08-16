@@ -80,23 +80,40 @@ Play.prototype = {
     },
     countDown: function () {
 
-        // bip every second except le last one with increasing volume
+        // Bip every last 10 seconds with increasing volume
         switch (this.CountdownDisplay) {
-            case 30:
+            case 10:
+                this.game.onTimer1.volume = 0.1;
+                break;
+            case 9:
+                this.game.onTimer1.volume = 0.2;
+                break;
+            case 8:
                 this.game.onTimer1.volume = 0.3;
                 break;
-            case 20:
+            case 7:
+                this.game.onTimer1.volume = 0.4;
+                break;
+            case 6:
                 this.game.onTimer1.volume = 0.5;
                 break;
-            case 10:
+            case 5:
+                this.game.onTimer1.volume = 0.6;
+                break;
+            case 4:
                 this.game.onTimer1.volume = 0.7;
                 break;
             case 3:
+                this.game.onTimer1.volume = 0.8;
+                break;
+            case 2:
+                this.game.onTimer1.volume = 0.9;
+                break;
+            case 1:
                 this.game.onTimer1.volume = 1;
                 break;
-            case 0:
+            default :
                 this.game.onTimer1.volume = 0;
-                break;
         }
 
         this.game.onTimer1.play();

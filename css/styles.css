@@ -13,4 +13,5 @@ body {
     height: 500px;
     margin-left: auto;
     margin-right: auto;
+    cursor: crosshair;
 }

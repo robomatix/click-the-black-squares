@@ -52,7 +52,6 @@ GameOver.prototype = {
 
         this.muteButton = this.game.add.button(this.game.world.centerX, 525, 'mute', this.toggleSound, this);
         this.muteButton.anchor.setTo(0.5, 0.5);
-        this.muteButton.input.useHandCursor = true;
         this.game.add.tween(this.muteButton).to({y: 460}, 500).easing(Phaser.Easing.Bounce.Out).delay(3500).start();
         if (this.game.sound.mute) {
             this.muteButton.frame = 1;
@@ -62,6 +61,7 @@ GameOver.prototype = {
     },
 
     update: function () {
+
 
     },
 

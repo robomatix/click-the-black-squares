@@ -46,9 +46,17 @@ GameOver.prototype = {
         this.button = this.game.add.button(this.game.world.centerX, 530, 'replayBtn', this.actionOnClickStartButton, this, 0, 0, 0);
         this.button.anchor.setTo(0.5, 0.5);
 
-        this.tweenButton = this.game.add.tween(this.button).to({y: 420}, 1000).easing(Phaser.Easing.Bounce.Out);
+        this.tweenButton = this.game.add.tween(this.button).to({y: 400}, 1000).easing(Phaser.Easing.Bounce.Out);
         this.tweenButton.onStart.add(this.playOnTweenEndGame, this);// Sound
         this.tweenButton.delay(2750).start();// Start
+
+        this.muteButton = this.game.add.button(this.game.world.centerX, 525, 'mute', this.toggleSound, this);
+        this.muteButton.anchor.setTo(0.5, 0.5);
+        this.muteButton.input.useHandCursor = true;
+        this.game.add.tween(this.muteButton).to({y: 460}, 500).easing(Phaser.Easing.Bounce.Out).delay(3500).start();
+        if (this.game.sound.mute) {
+            this.muteButton.frame = 1;
+        }
 
 
     },
@@ -56,6 +64,7 @@ GameOver.prototype = {
     update: function () {
 
     },
+
     playClickBlackSquareSound: function () {
 
         // Sound
@@ -63,6 +72,7 @@ GameOver.prototype = {
 
 
     },
+
     playOnTweenEndGame: function () {
 
         // Sound
@@ -70,6 +80,7 @@ GameOver.prototype = {
 
 
     },
+
     actionOnClickStartButton: function (btn) {
 
         // Sound
@@ -78,6 +89,12 @@ GameOver.prototype = {
         // Go to the actual game
         this.game.state.start('play');
 
+    },
+
+    toggleSound: function () {
+        this.game.sound.mute = !this.game.sound.mute;
+        this.muteButton.frame = this.game.sound.mute ? 1 : 0;
     }
+
 };
 module.exports = GameOver;

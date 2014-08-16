@@ -6,6 +6,7 @@ function Preload() {
 
 Preload.prototype = {
     preload: function () {
+
         this.asset = this.add.sprite(0, 240, 'preloader');
         this.asset.anchor.setTo(0.5, 0.5);
 
@@ -21,6 +22,7 @@ Preload.prototype = {
         // Button
         this.game.load.spritesheet('startBtn', 'assets/btn-go.png', 50, 50);
         this.game.load.spritesheet('replayBtn', 'assets/btn-replay.png', 308, 58);
+        this.game.load.spritesheet('mute', 'assets/mute-button.png', 70, 50);
 
 
         // Images

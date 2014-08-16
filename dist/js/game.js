@@ -129,9 +129,12 @@ function Boot() {
 
 Boot.prototype = {
     preload: function () {
-        this.load.image('preloader', 'assets/preload-bar-white-500-20.png');
+
+        this.load.image('preloader', 'assets/preload-bar.png');
+
     },
     create: function () {
+
         this.game.input.maxPointers = 1;
 
         // Set a background color
@@ -139,6 +142,7 @@ Boot.prototype = {
 
         // Start the preload state
         this.game.state.start('preload');
+
     }
 };
 
@@ -193,9 +197,17 @@ GameOver.prototype = {
         this.button = this.game.add.button(this.game.world.centerX, 530, 'replayBtn', this.actionOnClickStartButton, this, 0, 0, 0);
         this.button.anchor.setTo(0.5, 0.5);
 
-        this.tweenButton = this.game.add.tween(this.button).to({y: 420}, 1000).easing(Phaser.Easing.Bounce.Out);
+        this.tweenButton = this.game.add.tween(this.button).to({y: 400}, 1000).easing(Phaser.Easing.Bounce.Out);
         this.tweenButton.onStart.add(this.playOnTweenEndGame, this);// Sound
         this.tweenButton.delay(2750).start();// Start
+
+        this.muteButton = this.game.add.button(this.game.world.centerX, 525, 'mute', this.toggleSound, this);
+        this.muteButton.anchor.setTo(0.5, 0.5);
+        this.muteButton.input.useHandCursor = true;
+        this.game.add.tween(this.muteButton).to({y: 460}, 500).easing(Phaser.Easing.Bounce.Out).delay(3500).start();
+        if (this.game.sound.mute) {
+            this.muteButton.frame = 1;
+        }
 
 
     },
@@ -203,6 +215,7 @@ GameOver.prototype = {
     update: function () {
 
     },
+
     playClickBlackSquareSound: function () {
 
         // Sound
@@ -210,6 +223,7 @@ GameOver.prototype = {
 
 
     },
+
     playOnTweenEndGame: function () {
 
         // Sound
@@ -217,6 +231,7 @@ GameOver.prototype = {
 
 
     },
+
     actionOnClickStartButton: function (btn) {
 
         // Sound
@@ -225,7 +240,13 @@ GameOver.prototype = {
         // Go to the actual game
         this.game.state.start('play');
 
+    },
+
+    toggleSound: function () {
+        this.game.sound.mute = !this.game.sound.mute;
+        this.muteButton.frame = this.game.sound.mute ? 1 : 0;
     }
+
 };
 module.exports = GameOver;
 
@@ -246,21 +267,34 @@ Menu.prototype = {
          ******************************/
 
         // Title
+
         this.titleText = this.game.add.bitmapText(10, 500, 'fontSquareBB', 'CLICK THE BLACK SQUARES', 40);
         this.game.add.tween(this.titleText).to({y: 10}, 1000).easing(Phaser.Easing.Bounce.Out).start();
+
 
         // Pitch
         this.pitchText = this.game.add.bitmapText(69, 500, 'fontSquareBB', 'to win a random number of points !!!', 22);
         this.game.add.tween(this.pitchText).to({y: 60}, 1000).easing(Phaser.Easing.Bounce.Out).delay(1250).start();
 
         // Duration
+
         this.durationText = this.game.add.bitmapText(90, 500, 'fontSquareBB', 'PLAY THIRTY THREE SECONDS', 22);
         this.game.add.tween(this.durationText).to({y: 200}, 1000).easing(Phaser.Easing.Bounce.Out).delay(1750).start();
 
         // Button
+
         this.button = this.game.add.button(this.game.world.centerX, 525, 'startBtn', this.actionOnClickStartButton, this, 0, 0, 0);
         this.button.anchor.setTo(0.5, 0.5);
+        this.button.input.useHandCursor = true;
         this.game.add.tween(this.button).to({y: this.game.world.centerY}, 1000).easing(Phaser.Easing.Bounce.Out).delay(2000).start();
+
+        this.muteButton = this.game.add.button(this.game.world.centerX, 525, 'mute', this.toggleSound, this);
+        this.muteButton.anchor.setTo(0.5, 0.5);
+        this.muteButton.input.useHandCursor = true;
+        this.game.add.tween(this.muteButton).to({y: 440}, 500).easing(Phaser.Easing.Bounce.Out).delay(3500).start();
+        if (this.game.sound.mute) {
+            this.muteButton.frame = 1;
+        }
 
         /* Add sound
          ********************/
@@ -282,7 +316,13 @@ Menu.prototype = {
         // Go to the actual game
         this.game.state.start('play');
 
+    },
+
+    toggleSound: function () {
+        this.game.sound.mute = !this.game.sound.mute;
+        this.muteButton.frame = this.game.sound.mute ? 1 : 0;
     }
+
 
 };
 
@@ -505,6 +545,7 @@ function Preload() {
 
 Preload.prototype = {
     preload: function () {
+
         this.asset = this.add.sprite(0, 240, 'preloader');
         this.asset.anchor.setTo(0.5, 0.5);
 
@@ -520,6 +561,7 @@ Preload.prototype = {
         // Button
         this.game.load.spritesheet('startBtn', 'assets/btn-go.png', 50, 50);
         this.game.load.spritesheet('replayBtn', 'assets/btn-replay.png', 308, 58);
+        this.game.load.spritesheet('mute', 'assets/mute-button.png', 70, 50);
 
 
         // Images

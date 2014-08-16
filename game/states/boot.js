@@ -5,9 +5,12 @@ function Boot() {
 
 Boot.prototype = {
     preload: function () {
-        this.load.image('preloader', 'assets/preload-bar-white-500-20.png');
+
+        this.load.image('preloader', 'assets/preload-bar.png');
+
     },
     create: function () {
+
         this.game.input.maxPointers = 1;
 
         // Set a background color
@@ -15,6 +18,7 @@ Boot.prototype = {
 
         // Start the preload state
         this.game.state.start('preload');
+
     }
 };
 

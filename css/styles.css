@@ -9,6 +9,7 @@ body {
 #click-the-black-squares {
     border: 2px solid #000;
     width: 500px;
+    height: 500px;
     margin-left: auto;
     margin-right: auto;
 }

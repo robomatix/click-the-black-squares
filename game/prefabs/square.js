@@ -24,6 +24,7 @@ Square = function (game, x, y, frame) {
     this.hasBeenclicked = false;
     this.credit = 0;
     this.creditString = "";
+    this.thisyTo = 0;
 
 
 };
@@ -45,9 +46,16 @@ Square.prototype.goUp = function (velocityY) {
 Square.prototype.displayCredit = function (credit, x, y) {
 
     this.creditString = "+" + credit.toString();
+
+    if (y > 150) {// Direction of the y tween ( near top... )
+        this.thisYTo = y - 55;
+    } else {
+        this.thisYTo = y + 55;
+    }
+
     this.textCredit = this.game.add.bitmapText(x, y, 'fontSquareBV', this.creditString, 44);
     this.game.add.tween(this.textCredit).to({ alpha: 0 }, 250, Phaser.Easing.Linear.None, true, 250);
-    this.game.add.tween(this.textCredit).to({y: y - 55}, 200, Phaser.Easing.Linear.None, true, 0);
+    this.game.add.tween(this.textCredit).to({y: this.thisYTo}, 200, Phaser.Easing.Linear.None, true, 0);
 
 }
 

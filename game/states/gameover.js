@@ -52,11 +52,14 @@ GameOver.prototype = {
         this.tweenButton.onStart.add(this.playOnTweenEndGame, this);// Sound
         this.tweenButton.delay(2750).start();// Start
 
-        this.muteButton = this.game.add.button(this.game.world.centerX, 525, 'mute', this.toggleSound, this);
+        this.muteButton = this.game.add.button(this.game.world.centerX, 525, 'mute', this.toggleSound, this, 3, 0);
         this.muteButton.anchor.setTo(0.5, 0.5);
         this.game.add.tween(this.muteButton).to({y: 460}, 500).easing(Phaser.Easing.Bounce.Out).delay(3500).start();
         if (this.game.sound.mute) {
-            this.muteButton.frame = 1;
+
+            this.muteButton.setFrames(1, 2);
+            this.muteButton.frame = 2;
+
         }
 
 
@@ -94,8 +97,21 @@ GameOver.prototype = {
     },
 
     toggleSound: function () {
-        this.game.sound.mute = !this.game.sound.mute;
-        this.muteButton.frame = this.game.sound.mute ? 1 : 0;
+
+        if (this.game.sound.mute) {
+
+            this.muteButton.setFrames(3, 0);
+            this.muteButton.frame = 0;
+            this.game.sound.mute = false;
+
+        } else {
+
+            this.muteButton.setFrames(1, 2);
+            this.muteButton.frame = 2;
+            this.game.sound.mute = true;
+
+        }
+
     }
 
 };

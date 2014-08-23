@@ -48,7 +48,7 @@ GameOver.prototype = {
         this.replayButton = this.game.add.button(this.game.world.centerX, 530, 'replayBtn', this.actionOnClickStartButton, this, 1, 0, 0);
         this.replayButton.anchor.setTo(0.5, 0.5);
 
-        this.tweenButton = this.game.add.tween(this.button).to({y: 400}, 1000).easing(Phaser.Easing.Bounce.Out);
+        this.tweenButton = this.game.add.tween(this.replayButton).to({y: 400}, 1000).easing(Phaser.Easing.Bounce.Out);
         this.tweenButton.onStart.add(this.playOnTweenEndGame, this);// Sound
         this.tweenButton.delay(2750).start();// Start
 

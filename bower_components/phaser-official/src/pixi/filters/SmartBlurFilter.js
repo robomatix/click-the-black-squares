@@ -2,15 +2,14 @@
  * @author Mat Groves http://matgroves.com/ @Doormat23
  */
 
-PIXI.SmartBlurFilter = function()
-{
-    PIXI.AbstractFilter.call( this );
+PIXI.SmartBlurFilter = function () {
+    PIXI.AbstractFilter.call(this);
 
     this.passes = [this];
 
     // set the uniforms
     this.uniforms = {
-        blur: {type: '1f', value: 1/512},
+        blur: {type: '1f', value: 1 / 512},
     };
 
     this.fragmentSrc = [
@@ -48,14 +47,14 @@ PIXI.SmartBlurFilter = function()
     ];
 };
 
-PIXI.SmartBlurFilter.prototype = Object.create( PIXI.AbstractFilter.prototype );
+PIXI.SmartBlurFilter.prototype = Object.create(PIXI.AbstractFilter.prototype);
 PIXI.SmartBlurFilter.prototype.constructor = PIXI.SmartBlurFilter;
 
 Object.defineProperty(PIXI.SmartBlurFilter.prototype, 'blur', {
-    get: function() {
+    get: function () {
         return this.uniforms.blur.value;
     },
-    set: function(value) {
+    set: function (value) {
         this.uniforms.blur.value = value;
     }
 });

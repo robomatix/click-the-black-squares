@@ -15,7 +15,6 @@
  */
 
 
-
 var spine = {};
 
 spine.BoneData = function (name, parent) {
@@ -474,7 +473,7 @@ spine.AttachmentTimeline = function (frameCount) {
 spine.AttachmentTimeline.prototype = {
     slotIndex: 0,
     getFrameCount: function () {
-            return this.frames.length;
+        return this.frames.length;
     },
     setFrame: function (frameIndex, time, attachmentName) {
         this.frames[frameIndex] = time;
@@ -769,7 +768,7 @@ spine.AnimationStateData = function (skeletonData) {
     this.animationToMixTime = {};
 };
 spine.AnimationStateData.prototype = {
-        defaultMix: 0,
+    defaultMix: 0,
     setMixByName: function (fromName, toName, duration) {
         var from = this.skeletonData.findAnimation(fromName);
         if (!from) throw "Animation not found: " + fromName;
@@ -782,7 +781,7 @@ spine.AnimationStateData.prototype = {
     },
     getMix: function (from, to) {
         var time = this.animationToMixTime[from.name + ":" + to.name];
-            return time ? time : this.defaultMix;
+        return time ? time : this.defaultMix;
     }
 };
 
@@ -993,7 +992,7 @@ spine.SkeletonJson.prototype = {
             return attachment;
         }
 
-            throw "Unknown attachment type: " + type;
+        throw "Unknown attachment type: " + type;
     },
 
     readAnimation: function (name, map, skeletonData) {
@@ -1091,7 +1090,7 @@ spine.SkeletonJson.prototype = {
                         timeline.setFrame(frameIndex++, valueMap["time"], valueMap["name"]);
                     }
                     timelines.push(timeline);
-                        duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
+                    duration = Math.max(duration, timeline.frames[timeline.getFrameCount() - 1]);
 
                 } else
                     throw "Invalid timeline type for a slot: " + timelineName + " (" + slotName + ")";
@@ -1261,7 +1260,8 @@ spine.Atlas.TextureWrap = {
     repeat: 2
 };
 
-spine.AtlasPage = function () {};
+spine.AtlasPage = function () {
+};
 spine.AtlasPage.prototype = {
     name: null,
     format: null,
@@ -1274,7 +1274,8 @@ spine.AtlasPage.prototype = {
     height: 0
 };
 
-spine.AtlasRegion = function () {};
+spine.AtlasRegion = function () {
+};
 spine.AtlasRegion.prototype = {
     page: null,
     name: null,
@@ -1286,7 +1287,7 @@ spine.AtlasRegion.prototype = {
     index: 0,
     rotate: false,
     splits: null,
-    pads: null,
+    pads: null
 };
 
 spine.AtlasReader = function (text) {
@@ -1312,7 +1313,7 @@ spine.AtlasReader.prototype = {
         var line = this.readLine();
         var colon = line.indexOf(":");
         if (colon == -1) throw "Invalid line: " + line;
-        var i = 0, lastMatch= colon + 1;
+        var i = 0, lastMatch = colon + 1;
         for (; i < 3; i++) {
             var comma = line.indexOf(",", lastMatch);
             if (comma == -1) {
@@ -1333,19 +1334,19 @@ spine.AtlasAttachmentLoader = function (atlas) {
 spine.AtlasAttachmentLoader.prototype = {
     newAttachment: function (skin, type, name) {
         switch (type) {
-        case spine.AttachmentType.region:
-            var region = this.atlas.findRegion(name);
-            if (!region) throw "Region not found in atlas: " + name + " (" + type + ")";
-            var attachment = new spine.RegionAttachment(name);
-            attachment.rendererObject = region;
-            attachment.setUVs(region.u, region.v, region.u2, region.v2, region.rotate);
-            attachment.regionOffsetX = region.offsetX;
-            attachment.regionOffsetY = region.offsetY;
-            attachment.regionWidth = region.width;
-            attachment.regionHeight = region.height;
-            attachment.regionOriginalWidth = region.originalWidth;
-            attachment.regionOriginalHeight = region.originalHeight;
-            return attachment;
+            case spine.AttachmentType.region:
+                var region = this.atlas.findRegion(name);
+                if (!region) throw "Region not found in atlas: " + name + " (" + type + ")";
+                var attachment = new spine.RegionAttachment(name);
+                attachment.rendererObject = region;
+                attachment.setUVs(region.u, region.v, region.u2, region.v2, region.rotate);
+                attachment.regionOffsetX = region.offsetX;
+                attachment.regionOffsetY = region.offsetY;
+                attachment.regionWidth = region.width;
+                attachment.regionHeight = region.height;
+                attachment.regionOriginalWidth = region.originalWidth;
+                attachment.regionOriginalHeight = region.originalHeight;
+                return attachment;
         }
         throw "Unknown attachment type: " + type;
     }
@@ -1454,7 +1455,7 @@ PIXI.Spine.prototype.updateTransform = function () {
         slotContainer.rotation = -(slot.bone.worldRotation * Math.PI / 180);
 
         slotContainer.alpha = slot.a;
-        slot.currentSprite.tint = PIXI.rgb2hex([slot.r,slot.g,slot.b]);
+        slot.currentSprite.tint = PIXI.rgb2hex([slot.r, slot.g, slot.b]);
     }
 
     PIXI.DisplayObjectContainer.prototype.updateTransform.call(this);

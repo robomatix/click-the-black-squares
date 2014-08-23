@@ -2,6 +2,6 @@
   "name": "click-the-black-squares",
   "version": "0.0.0",
   "dependencies": {
-    "phaser-official": "2.0.6"
+    "phaser-official": "2.0.7"
   }
 }

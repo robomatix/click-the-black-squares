@@ -1,139 +1,139 @@
 /**
-* @author       Richard Davey <rich@photonstorm.com>
-* @copyright    2014 Photon Storm Ltd.
-* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
-*/
+ * @author       Richard Davey <rich@photonstorm.com>
+ * @copyright    2014 Photon Storm Ltd.
+ * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+ */
 
 /**
-* An Animation instance contains a single animation and the controls to play it.
-* It is created by the AnimationManager, consists of Animation.Frame objects and belongs to a single Game Object such as a Sprite.
-*
-* @class Phaser.Animation
-* @constructor
-* @param {Phaser.Game} game - A reference to the currently running game.
-* @param {Phaser.Sprite} parent - A reference to the owner of this Animation.
-* @param {string} name - The unique name for this animation, used in playback commands.
-* @param {Phaser.FrameData} frameData - The FrameData object that contains all frames used by this Animation.
-* @param {(Array.<number>|Array.<string>)} frames - An array of numbers or strings indicating which frames to play in which order.
-* @param {number} delay - The time between each frame of the animation, given in ms.
-* @param {boolean} loop - Should this animation loop when it reaches the end or play through once.
-*/
+ * An Animation instance contains a single animation and the controls to play it.
+ * It is created by the AnimationManager, consists of Animation.Frame objects and belongs to a single Game Object such as a Sprite.
+ *
+ * @class Phaser.Animation
+ * @constructor
+ * @param {Phaser.Game} game - A reference to the currently running game.
+ * @param {Phaser.Sprite} parent - A reference to the owner of this Animation.
+ * @param {string} name - The unique name for this animation, used in playback commands.
+ * @param {Phaser.FrameData} frameData - The FrameData object that contains all frames used by this Animation.
+ * @param {(Array.<number>|Array.<string>)} frames - An array of numbers or strings indicating which frames to play in which order.
+ * @param {number} delay - The time between each frame of the animation, given in ms.
+ * @param {boolean} loop - Should this animation loop when it reaches the end or play through once.
+ */
 Phaser.Animation = function (game, parent, name, frameData, frames, delay, loop) {
 
     /**
-    * @property {Phaser.Game} game - A reference to the currently running Game.
-    */
+     * @property {Phaser.Game} game - A reference to the currently running Game.
+     */
     this.game = game;
 
     /**
-    * @property {Phaser.Sprite} _parent - A reference to the parent Sprite that owns this Animation.
-    * @private
-    */
+     * @property {Phaser.Sprite} _parent - A reference to the parent Sprite that owns this Animation.
+     * @private
+     */
     this._parent = parent;
 
     /**
-    * @property {Phaser.FrameData} _frameData - The FrameData the Animation uses.
-    * @private
-    */
+     * @property {Phaser.FrameData} _frameData - The FrameData the Animation uses.
+     * @private
+     */
     this._frameData = frameData;
 
     /**
-    * @property {string} name - The user defined name given to this Animation.
-    */
+     * @property {string} name - The user defined name given to this Animation.
+     */
     this.name = name;
 
     /**
-    * @property {array} _frames
-    * @private
-    */
+     * @property {array} _frames
+     * @private
+     */
     this._frames = [];
     this._frames = this._frames.concat(frames);
 
     /**
-    * @property {number} delay - The delay in ms between each frame of the Animation.
-    */
+     * @property {number} delay - The delay in ms between each frame of the Animation.
+     */
     this.delay = 1000 / delay;
 
     /**
-    * @property {boolean} loop - The loop state of the Animation.
-    */
+     * @property {boolean} loop - The loop state of the Animation.
+     */
     this.loop = loop;
 
     /**
-    * @property {number} loopCount - The number of times the animation has looped since it was last started.
-    */
+     * @property {number} loopCount - The number of times the animation has looped since it was last started.
+     */
     this.loopCount = 0;
 
     /**
-    * @property {boolean} killOnComplete - Should the parent of this Animation be killed when the animation completes?
-    * @default
-    */
+     * @property {boolean} killOnComplete - Should the parent of this Animation be killed when the animation completes?
+     * @default
+     */
     this.killOnComplete = false;
 
     /**
-    * @property {boolean} isFinished - The finished state of the Animation. Set to true once playback completes, false during playback.
-    * @default
-    */
+     * @property {boolean} isFinished - The finished state of the Animation. Set to true once playback completes, false during playback.
+     * @default
+     */
     this.isFinished = false;
 
     /**
-    * @property {boolean} isPlaying - The playing state of the Animation. Set to false once playback completes, true during playback.
-    * @default
-    */
+     * @property {boolean} isPlaying - The playing state of the Animation. Set to false once playback completes, true during playback.
+     * @default
+     */
     this.isPlaying = false;
 
     /**
-    * @property {boolean} isPaused - The paused state of the Animation.
-    * @default
-    */
+     * @property {boolean} isPaused - The paused state of the Animation.
+     * @default
+     */
     this.isPaused = false;
 
     /**
-    * @property {boolean} _pauseStartTime - The time the animation paused.
-    * @private
-    * @default
-    */
+     * @property {boolean} _pauseStartTime - The time the animation paused.
+     * @private
+     * @default
+     */
     this._pauseStartTime = 0;
 
     /**
-    * @property {number} _frameIndex
-    * @private
-    * @default
-    */
+     * @property {number} _frameIndex
+     * @private
+     * @default
+     */
     this._frameIndex = 0;
 
     /**
-    * @property {number} _frameDiff
-    * @private
-    * @default
-    */
+     * @property {number} _frameDiff
+     * @private
+     * @default
+     */
     this._frameDiff = 0;
 
     /**
-    * @property {number} _frameSkip
-    * @private
-    * @default
-    */
+     * @property {number} _frameSkip
+     * @private
+     * @default
+     */
     this._frameSkip = 1;
 
     /**
-    * @property {Phaser.Frame} currentFrame - The currently displayed frame of the Animation.
-    */
+     * @property {Phaser.Frame} currentFrame - The currently displayed frame of the Animation.
+     */
     this.currentFrame = this._frameData.getFrame(this._frames[this._frameIndex]);
 
     /**
-    * @property {Phaser.Signal} onStart - This event is dispatched when this Animation starts playback.
-    */
+     * @property {Phaser.Signal} onStart - This event is dispatched when this Animation starts playback.
+     */
     this.onStart = new Phaser.Signal();
 
     /**
-    * @property {Phaser.Signal} onComplete - This event is dispatched when this Animation completes playback. If the animation is set to loop this is never fired, listen for onAnimationLoop instead.
-    */
+     * @property {Phaser.Signal} onComplete - This event is dispatched when this Animation completes playback. If the animation is set to loop this is never fired, listen for onAnimationLoop instead.
+     */
     this.onComplete = new Phaser.Signal();
 
     /**
-    * @property {Phaser.Signal} onLoop - This event is dispatched when this Animation loops.
-    */
+     * @property {Phaser.Signal} onLoop - This event is dispatched when this Animation loops.
+     */
     this.onLoop = new Phaser.Signal();
 
     //  Set-up some event listeners
@@ -145,30 +145,27 @@ Phaser.Animation = function (game, parent, name, frameData, frames, delay, loop)
 Phaser.Animation.prototype = {
 
     /**
-    * Plays this animation.
-    *
-    * @method Phaser.Animation#play
-    * @param {number} [frameRate=null] - The framerate to play the animation at. The speed is given in frames per second. If not provided the previously set frameRate of the Animation is used.
-    * @param {boolean} [loop=false] - Should the animation be looped after playback. If not provided the previously set loop value of the Animation is used.
-    * @param {boolean} [killOnComplete=false] - If set to true when the animation completes (only happens if loop=false) the parent Sprite will be killed.
-    * @return {Phaser.Animation} - A reference to this Animation instance.
-    */
+     * Plays this animation.
+     *
+     * @method Phaser.Animation#play
+     * @param {number} [frameRate=null] - The framerate to play the animation at. The speed is given in frames per second. If not provided the previously set frameRate of the Animation is used.
+     * @param {boolean} [loop=false] - Should the animation be looped after playback. If not provided the previously set loop value of the Animation is used.
+     * @param {boolean} [killOnComplete=false] - If set to true when the animation completes (only happens if loop=false) the parent Sprite will be killed.
+     * @return {Phaser.Animation} - A reference to this Animation instance.
+     */
     play: function (frameRate, loop, killOnComplete) {
 
-        if (typeof frameRate === 'number')
-        {
+        if (typeof frameRate === 'number') {
             //  If they set a new frame rate then use it, otherwise use the one set on creation
             this.delay = 1000 / frameRate;
         }
 
-        if (typeof loop === 'boolean')
-        {
+        if (typeof loop === 'boolean') {
             //  If they set a new loop value then use it, otherwise use the one set on creation
             this.loop = loop;
         }
 
-        if (typeof killOnComplete !== 'undefined')
-        {
+        if (typeof killOnComplete !== 'undefined') {
             //  Remove the parent sprite once the animation has finished?
             this.killOnComplete = killOnComplete;
         }
@@ -188,8 +185,7 @@ Phaser.Animation.prototype = {
         this._parent.setFrame(this.currentFrame);
 
         //  TODO: Double check if required
-        if (this._parent.__tilePattern)
-        {
+        if (this._parent.__tilePattern) {
             this._parent.__tilePattern = false;
             this._parent.tilingTexture = false;
         }
@@ -203,10 +199,10 @@ Phaser.Animation.prototype = {
     },
 
     /**
-    * Sets this animation back to the first frame and restarts the animation.
-    *
-    * @method Phaser.Animation#restart
-    */
+     * Sets this animation back to the first frame and restarts the animation.
+     *
+     * @method Phaser.Animation#restart
+     */
     restart: function () {
 
         this.isPlaying = true;
@@ -228,52 +224,42 @@ Phaser.Animation.prototype = {
     },
 
     /**
-    * Sets this animations playback to a given frame with the given ID.
-    *
-    * @method Phaser.Animation#setFrame
-    * @param {string|number} [frameId] - The identifier of the frame to set. Can be the name of the frame, the sprite index of the frame, or the animation-local frame index.
-    * @param {boolean} [useLocalFrameIndex=false] - If you provide a number for frameId, should it use the numeric indexes of the frameData, or the 0-indexed frame index local to the animation.
-    */
-    setFrame: function(frameId, useLocalFrameIndex) {
+     * Sets this animations playback to a given frame with the given ID.
+     *
+     * @method Phaser.Animation#setFrame
+     * @param {string|number} [frameId] - The identifier of the frame to set. Can be the name of the frame, the sprite index of the frame, or the animation-local frame index.
+     * @param {boolean} [useLocalFrameIndex=false] - If you provide a number for frameId, should it use the numeric indexes of the frameData, or the 0-indexed frame index local to the animation.
+     */
+    setFrame: function (frameId, useLocalFrameIndex) {
 
         var frameIndex;
 
-        if (typeof useLocalFrameIndex === 'undefined')
-        {
+        if (typeof useLocalFrameIndex === 'undefined') {
             useLocalFrameIndex = false;
         }
 
         //  Find the index to the desired frame.
-        if (typeof frameId === "string")
-        {
-            for (var i = 0; i < this._frames.length; i++)
-            {
-                if (this._frameData.getFrame(this._frames[i]).name === frameId)
-                {
+        if (typeof frameId === "string") {
+            for (var i = 0; i < this._frames.length; i++) {
+                if (this._frameData.getFrame(this._frames[i]).name === frameId) {
                     frameIndex = i;
                 }
             }
         }
-        else if (typeof frameId === "number")
-        {
-            if (useLocalFrameIndex)
-            {
+        else if (typeof frameId === "number") {
+            if (useLocalFrameIndex) {
                 frameIndex = frameId;
             }
-            else
-            {
-                for (var i = 0; i < this._frames.length; i++)
-                {
-                    if (this.frames[i] === frameIndex)
-                    {
+            else {
+                for (var i = 0; i < this._frames.length; i++) {
+                    if (this.frames[i] === frameIndex) {
                         frameIndex = i;
                     }
                 }
             }
         }
 
-        if (frameIndex)
-        {
+        if (frameIndex) {
             //  Set the current frame index to the found index. Subtract 1 so that it animates to the desired frame on update.
             this._frameIndex = frameIndex - 1;
 
@@ -286,30 +272,32 @@ Phaser.Animation.prototype = {
     },
 
     /**
-    * Stops playback of this animation and set it to a finished state. If a resetFrame is provided it will stop playback and set frame to the first in the animation.
-    * If `dispatchComplete` is true it will dispatch the complete events, otherwise they'll be ignored.
-    *
-    * @method Phaser.Animation#stop
-    * @param {boolean} [resetFrame=false] - If true after the animation stops the currentFrame value will be set to the first frame in this animation.
-    * @param {boolean} [dispatchComplete=false] - Dispatch the Animation.onComplete and parent.onAnimationComplete events?
-    */
+     * Stops playback of this animation and set it to a finished state. If a resetFrame is provided it will stop playback and set frame to the first in the animation.
+     * If `dispatchComplete` is true it will dispatch the complete events, otherwise they'll be ignored.
+     *
+     * @method Phaser.Animation#stop
+     * @param {boolean} [resetFrame=false] - If true after the animation stops the currentFrame value will be set to the first frame in this animation.
+     * @param {boolean} [dispatchComplete=false] - Dispatch the Animation.onComplete and parent.onAnimationComplete events?
+     */
     stop: function (resetFrame, dispatchComplete) {
 
-        if (typeof resetFrame === 'undefined') { resetFrame = false; }
-        if (typeof dispatchComplete === 'undefined') { dispatchComplete = false; }
+        if (typeof resetFrame === 'undefined') {
+            resetFrame = false;
+        }
+        if (typeof dispatchComplete === 'undefined') {
+            dispatchComplete = false;
+        }
 
         this.isPlaying = false;
         this.isFinished = true;
         this.paused = false;
 
-        if (resetFrame)
-        {
+        if (resetFrame) {
             this.currentFrame = this._frameData.getFrame(this._frames[0]);
             this._parent.setFrame(this.currentFrame);
         }
 
-        if (dispatchComplete)
-        {
+        if (dispatchComplete) {
             this._parent.events.onAnimationComplete.dispatch(this._parent, this);
             this.onComplete.dispatch(this._parent, this);
         }
@@ -317,47 +305,43 @@ Phaser.Animation.prototype = {
     },
 
     /**
-    * Called when the Game enters a paused state.
-    *
-    * @method Phaser.Animation#onPause
-    */
+     * Called when the Game enters a paused state.
+     *
+     * @method Phaser.Animation#onPause
+     */
     onPause: function () {
 
-        if (this.isPlaying)
-        {
+        if (this.isPlaying) {
             this._frameDiff = this._timeNextFrame - this.game.time.now;
         }
 
     },
 
     /**
-    * Called when the Game resumes from a paused state.
-    *
-    * @method Phaser.Animation#onResume
-    */
+     * Called when the Game resumes from a paused state.
+     *
+     * @method Phaser.Animation#onResume
+     */
     onResume: function () {
 
-        if (this.isPlaying)
-        {
+        if (this.isPlaying) {
             this._timeNextFrame = this.game.time.now + this._frameDiff;
         }
 
     },
 
     /**
-    * Updates this animation. Called automatically by the AnimationManager.
-    *
-    * @method Phaser.Animation#update
-    */
+     * Updates this animation. Called automatically by the AnimationManager.
+     *
+     * @method Phaser.Animation#update
+     */
     update: function () {
 
-        if (this.isPaused)
-        {
+        if (this.isPaused) {
             return false;
         }
 
-        if (this.isPlaying && this.game.time.now >= this._timeNextFrame)
-        {
+        if (this.isPlaying && this.game.time.now >= this._timeNextFrame) {
             this._frameSkip = 1;
 
             //  Lagging?
@@ -365,8 +349,7 @@ Phaser.Animation.prototype = {
 
             this._timeLastFrame = this.game.time.now;
 
-            if (this._frameDiff > this.delay)
-            {
+            if (this._frameDiff > this.delay) {
                 //  We need to skip a frame, work out how many
                 this._frameSkip = Math.floor(this._frameDiff / this.delay);
                 this._frameDiff -= (this._frameSkip * this.delay);
@@ -377,30 +360,25 @@ Phaser.Animation.prototype = {
 
             this._frameIndex += this._frameSkip;
 
-            if (this._frameIndex >= this._frames.length)
-            {
-                if (this.loop)
-                {
+            if (this._frameIndex >= this._frames.length) {
+                if (this.loop) {
                     this._frameIndex %= this._frames.length;
                     this.currentFrame = this._frameData.getFrame(this._frames[this._frameIndex]);
                     this.loopCount++;
                     this._parent.events.onAnimationLoop.dispatch(this._parent, this);
                     this.onLoop.dispatch(this._parent, this);
                 }
-                else
-                {
+                else {
                     this.complete();
                 }
             }
 
             this.currentFrame = this._frameData.getFrame(this._frames[this._frameIndex]);
 
-            if (this.currentFrame)
-            {
+            if (this.currentFrame) {
                 this._parent.setFrame(this.currentFrame);
 
-                if (this._parent.__tilePattern)
-                {
+                if (this._parent.__tilePattern) {
                     this._parent.__tilePattern = false;
                     this._parent.tilingTexture = false;
                 }
@@ -414,41 +392,37 @@ Phaser.Animation.prototype = {
     },
 
     /**
-    * Advances by the given number of frames in the Animation, taking the loop value into consideration.
-    *
-    * @method Phaser.Animation#next
-    * @param {number} [quantity=1] - The number of frames to advance.
-    */
+     * Advances by the given number of frames in the Animation, taking the loop value into consideration.
+     *
+     * @method Phaser.Animation#next
+     * @param {number} [quantity=1] - The number of frames to advance.
+     */
     next: function (quantity) {
 
-        if (typeof quantity === 'undefined') { quantity = 1; }
+        if (typeof quantity === 'undefined') {
+            quantity = 1;
+        }
 
         var frame = this._frameIndex + quantity;
 
-        if (frame >= this._frames.length)
-        {
-            if (this.loop)
-            {
+        if (frame >= this._frames.length) {
+            if (this.loop) {
                 frame %= this._frames.length;
             }
-            else
-            {
+            else {
                 frame = this._frames.length - 1;
             }
         }
 
-        if (frame !== this._frameIndex)
-        {
+        if (frame !== this._frameIndex) {
             this._frameIndex = frame;
 
             this.currentFrame = this._frameData.getFrame(this._frames[this._frameIndex]);
 
-            if (this.currentFrame)
-            {
+            if (this.currentFrame) {
                 this._parent.setFrame(this.currentFrame);
 
-                if (this._parent.__tilePattern)
-                {
+                if (this._parent.__tilePattern) {
                     this._parent.__tilePattern = false;
                     this._parent.tilingTexture = false;
                 }
@@ -458,41 +432,37 @@ Phaser.Animation.prototype = {
     },
 
     /**
-    * Moves backwards the given number of frames in the Animation, taking the loop value into consideration.
-    *
-    * @method Phaser.Animation#previous
-    * @param {number} [quantity=1] - The number of frames to move back.
-    */
+     * Moves backwards the given number of frames in the Animation, taking the loop value into consideration.
+     *
+     * @method Phaser.Animation#previous
+     * @param {number} [quantity=1] - The number of frames to move back.
+     */
     previous: function (quantity) {
 
-        if (typeof quantity === 'undefined') { quantity = 1; }
+        if (typeof quantity === 'undefined') {
+            quantity = 1;
+        }
 
         var frame = this._frameIndex - quantity;
 
-        if (frame < 0)
-        {
-            if (this.loop)
-            {
+        if (frame < 0) {
+            if (this.loop) {
                 frame = this._frames.length + frame;
             }
-            else
-            {
+            else {
                 frame++;
             }
         }
 
-        if (frame !== this._frameIndex)
-        {
+        if (frame !== this._frameIndex) {
             this._frameIndex = frame;
 
             this.currentFrame = this._frameData.getFrame(this._frames[this._frameIndex]);
 
-            if (this.currentFrame)
-            {
+            if (this.currentFrame) {
                 this._parent.setFrame(this.currentFrame);
 
-                if (this._parent.__tilePattern)
-                {
+                if (this._parent.__tilePattern) {
                     this._parent.__tilePattern = false;
                     this._parent.tilingTexture = false;
                 }
@@ -502,15 +472,15 @@ Phaser.Animation.prototype = {
     },
 
     /**
-    * Cleans up this animation ready for deletion. Nulls all values and references.
-    *
-    * @method Phaser.Animation#destroy
-    */
+     * Cleans up this animation ready for deletion. Nulls all values and references.
+     *
+     * @method Phaser.Animation#destroy
+     */
     destroy: function () {
 
         this.game.onPause.remove(this.onPause, this);
         this.game.onResume.remove(this.onResume, this);
-        
+
         this.game = null;
         this._parent = null;
         this._frames = null;
@@ -525,11 +495,11 @@ Phaser.Animation.prototype = {
     },
 
     /**
-    * Called internally when the animation finishes playback.
-    * Sets the isPlaying and isFinished states and dispatches the onAnimationComplete event if it exists on the parent and local onComplete event.
-    *
-    * @method Phaser.Animation#complete
-    */
+     * Called internally when the animation finishes playback.
+     * Sets the isPlaying and isFinished states and dispatches the onAnimationComplete event if it exists on the parent and local onComplete event.
+     *
+     * @method Phaser.Animation#complete
+     */
     complete: function () {
 
         this.isPlaying = false;
@@ -540,8 +510,7 @@ Phaser.Animation.prototype = {
 
         this.onComplete.dispatch(this._parent, this);
 
-        if (this.killOnComplete)
-        {
+        if (this.killOnComplete) {
             this._parent.kill();
         }
 
@@ -552,9 +521,9 @@ Phaser.Animation.prototype = {
 Phaser.Animation.prototype.constructor = Phaser.Animation;
 
 /**
-* @name Phaser.Animation#paused
-* @property {boolean} paused - Gets and sets the paused state of this Animation.
-*/
+ * @name Phaser.Animation#paused
+ * @property {boolean} paused - Gets and sets the paused state of this Animation.
+ */
 Object.defineProperty(Phaser.Animation.prototype, 'paused', {
 
     get: function () {
@@ -567,16 +536,13 @@ Object.defineProperty(Phaser.Animation.prototype, 'paused', {
 
         this.isPaused = value;
 
-        if (value)
-        {
+        if (value) {
             //  Paused
             this._pauseStartTime = this.game.time.now;
         }
-        else
-        {
+        else {
             //  Un-paused
-            if (this.isPlaying)
-            {
+            if (this.isPlaying) {
                 this._timeNextFrame = this.game.time.now + this.delay;
             }
         }
@@ -586,10 +552,10 @@ Object.defineProperty(Phaser.Animation.prototype, 'paused', {
 });
 
 /**
-* @name Phaser.Animation#frameTotal
-* @property {number} frameTotal - The total number of frames in the currently loaded FrameData, or -1 if no FrameData is loaded.
-* @readonly
-*/
+ * @name Phaser.Animation#frameTotal
+ * @property {number} frameTotal - The total number of frames in the currently loaded FrameData, or -1 if no FrameData is loaded.
+ * @readonly
+ */
 Object.defineProperty(Phaser.Animation.prototype, 'frameTotal', {
 
     get: function () {
@@ -599,19 +565,17 @@ Object.defineProperty(Phaser.Animation.prototype, 'frameTotal', {
 });
 
 /**
-* @name Phaser.Animation#frame
-* @property {number} frame - Gets or sets the current frame index and updates the Texture Cache for display.
-*/
+ * @name Phaser.Animation#frame
+ * @property {number} frame - Gets or sets the current frame index and updates the Texture Cache for display.
+ */
 Object.defineProperty(Phaser.Animation.prototype, 'frame', {
 
     get: function () {
 
-        if (this.currentFrame !== null)
-        {
+        if (this.currentFrame !== null) {
             return this.currentFrame.index;
         }
-        else
-        {
+        else {
             return this._frameIndex;
         }
 
@@ -621,8 +585,7 @@ Object.defineProperty(Phaser.Animation.prototype, 'frame', {
 
         this.currentFrame = this._frameData.getFrame(this._frames[value]);
 
-        if (this.currentFrame !== null)
-        {
+        if (this.currentFrame !== null) {
             this._frameIndex = value;
             this._parent.setFrame(this.currentFrame);
         }
@@ -632,9 +595,9 @@ Object.defineProperty(Phaser.Animation.prototype, 'frame', {
 });
 
 /**
-* @name Phaser.Animation#speed
-* @property {number} speed - Gets or sets the current speed of the animation, the time between each frame of the animation, given in ms. Takes effect from the NEXT frame. Minimum value is 1.
-*/
+ * @name Phaser.Animation#speed
+ * @property {number} speed - Gets or sets the current speed of the animation, the time between each frame of the animation, given in ms. Takes effect from the NEXT frame. Minimum value is 1.
+ */
 Object.defineProperty(Phaser.Animation.prototype, 'speed', {
 
     get: function () {
@@ -645,8 +608,7 @@ Object.defineProperty(Phaser.Animation.prototype, 'speed', {
 
     set: function (value) {
 
-        if (value >= 1)
-        {
+        if (value >= 1) {
             this.delay = 1000 / value;
         }
 
@@ -655,36 +617,34 @@ Object.defineProperty(Phaser.Animation.prototype, 'speed', {
 });
 
 /**
-* Really handy function for when you are creating arrays of animation data but it's using frame names and not numbers.
-* For example imagine you've got 30 frames named: 'explosion_0001-large' to 'explosion_0030-large'
-* You could use this function to generate those by doing: Phaser.Animation.generateFrameNames('explosion_', 1, 30, '-large', 4);
-*
-* @method Phaser.Animation.generateFrameNames
-* @param {string} prefix - The start of the filename. If the filename was 'explosion_0001-large' the prefix would be 'explosion_'.
-* @param {number} start - The number to start sequentially counting from. If your frames are named 'explosion_0001' to 'explosion_0034' the start is 1.
-* @param {number} stop - The number to count to. If your frames are named 'explosion_0001' to 'explosion_0034' the stop value is 34.
-* @param {string} [suffix=''] - The end of the filename. If the filename was 'explosion_0001-large' the prefix would be '-large'.
-* @param {number} [zeroPad=0] - The number of zeroes to pad the min and max values with. If your frames are named 'explosion_0001' to 'explosion_0034' then the zeroPad is 4.
-* @return {array} An array of framenames.
-*/
+ * Really handy function for when you are creating arrays of animation data but it's using frame names and not numbers.
+ * For example imagine you've got 30 frames named: 'explosion_0001-large' to 'explosion_0030-large'
+ * You could use this function to generate those by doing: Phaser.Animation.generateFrameNames('explosion_', 1, 30, '-large', 4);
+ *
+ * @method Phaser.Animation.generateFrameNames
+ * @param {string} prefix - The start of the filename. If the filename was 'explosion_0001-large' the prefix would be 'explosion_'.
+ * @param {number} start - The number to start sequentially counting from. If your frames are named 'explosion_0001' to 'explosion_0034' the start is 1.
+ * @param {number} stop - The number to count to. If your frames are named 'explosion_0001' to 'explosion_0034' the stop value is 34.
+ * @param {string} [suffix=''] - The end of the filename. If the filename was 'explosion_0001-large' the prefix would be '-large'.
+ * @param {number} [zeroPad=0] - The number of zeroes to pad the min and max values with. If your frames are named 'explosion_0001' to 'explosion_0034' then the zeroPad is 4.
+ * @return {array} An array of framenames.
+ */
 Phaser.Animation.generateFrameNames = function (prefix, start, stop, suffix, zeroPad) {
 
-    if (typeof suffix == 'undefined') { suffix = ''; }
+    if (typeof suffix == 'undefined') {
+        suffix = '';
+    }
 
     var output = [];
     var frame = '';
 
-    if (start < stop)
-    {
-        for (var i = start; i <= stop; i++)
-        {
-            if (typeof zeroPad == 'number')
-            {
+    if (start < stop) {
+        for (var i = start; i <= stop; i++) {
+            if (typeof zeroPad == 'number') {
                 //  str, len, pad, dir
                 frame = Phaser.Utils.pad(i.toString(), zeroPad, '0', 1);
             }
-            else
-            {
+            else {
                 frame = i.toString();
             }
 
@@ -693,17 +653,13 @@ Phaser.Animation.generateFrameNames = function (prefix, start, stop, suffix, zer
             output.push(frame);
         }
     }
-    else
-    {
-        for (var i = start; i >= stop; i--)
-        {
-            if (typeof zeroPad == 'number')
-            {
+    else {
+        for (var i = start; i >= stop; i--) {
+            if (typeof zeroPad == 'number') {
                 //  str, len, pad, dir
                 frame = Phaser.Utils.pad(i.toString(), zeroPad, '0', 1);
             }
-            else
-            {
+            else {
                 frame = i.toString();
             }
 

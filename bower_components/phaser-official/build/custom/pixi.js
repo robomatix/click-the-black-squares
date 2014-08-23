@@ -24,7 +24,7 @@ PIXI.WEBGL_RENDERER = 0;
 PIXI.CANVAS_RENDERER = 1;
 
 // useful for testing against if your lib is using pixi.
-PIXI.VERSION = "v1.6";
+PIXI.VERSION = "v1.6.1";
 
 
 // the various blend modes supported by pixi
@@ -58,8 +58,16 @@ PIXI.scaleModes = {
 // used to create uids for various pixi objects..
 PIXI._UID = 0;
 
-PIXI.Float32Array = Float32Array || Array;
-PIXI.Uint16Array = Uint16Array || Array;
+if(typeof(Float32Array) != 'undefined')
+{
+    PIXI.Float32Array = Float32Array;
+    PIXI.Uint16Array = Uint16Array;
+}
+else
+{
+    PIXI.Float32Array = Array;
+    PIXI.Uint16Array = Array;
+}
 
 // interaction frequency 
 PIXI.INTERACTION_FREQUENCY = 30;
@@ -78,7 +86,7 @@ PIXI.sayHello = function (type)
     if ( navigator.userAgent.toLowerCase().indexOf('chrome') > -1 )
     {
         var args = [
-            '%c %c %c Pixi.js ' + PIXI.VERSION + ' - ' + type + '  %c ' + ' %c ' + ' http://pixijs.com  %c %c ♥%c♥%c♥ ',
+            '%c %c %c Pixi.js ' + PIXI.VERSION + ' - ' + type + '  %c ' + ' %c ' + ' http://www.pixijs.com/  %c %c ♥%c♥%c♥ ',
             'background: #ff66a5',
             'background: #ff66a5',
             'color: #ff66a5; background: #030307;',
@@ -96,7 +104,7 @@ PIXI.sayHello = function (type)
     }
     else if (window['console'])
     {
-        console.log('Pixi.js ' + PIXI.VERSION + ' - http://pixjs.com');
+        console.log('Pixi.js ' + PIXI.VERSION + ' - http://www.pixijs.com/');
     }
 
     PIXI.dontSayHello = true;
@@ -1268,7 +1276,19 @@ Object.defineProperty(PIXI.DisplayObjectContainer.prototype, 'width', {
         return this.scale.x * this.getLocalBounds().width;
     },
     set: function(value) {
-        this.scale.x = value / (this.getLocalBounds().width/this.scale.x);
+        
+        var width = this.getLocalBounds().width;
+
+        if(width !== 0)
+        {
+            this.scale.x = value / ( width/this.scale.x );
+        }
+        else
+        {
+            this.scale.x = 1;
+        }
+
+        
         this._width = value;
     }
 });
@@ -1286,7 +1306,18 @@ Object.defineProperty(PIXI.DisplayObjectContainer.prototype, 'height', {
         return  this.scale.y * this.getLocalBounds().height;
     },
     set: function(value) {
-        this.scale.y = value / (this.getLocalBounds().height/this.scale.y);
+
+        var height = this.getLocalBounds().height;
+
+        if(height !== 0)
+        {
+            this.scale.y = value / ( height/this.scale.y );
+        }
+        else
+        {
+            this.scale.y = 1;
+        }
+
         this._height = value;
     }
 });
@@ -1807,17 +1838,7 @@ Object.defineProperty(PIXI.Sprite.prototype, 'height', {
  */
 PIXI.Sprite.prototype.setTexture = function(texture)
 {
-    // stop current texture;
-    if(this.texture.baseTexture !== texture.baseTexture)
-    {
-        this.textureChange = true;
-        this.texture = texture;
-    }
-    else
-    {
-        this.texture = texture;
-    }
-
+    this.texture = texture;
     this.cachedTint = 0xFFFFFF;
 };
 
@@ -2408,14 +2429,61 @@ PIXI.Text = function(text, style)
 
     this.setText(text);
     this.setStyle(style);
-
-    this.updateText();
-    this.dirty = false;
 };
 
 // constructor
 PIXI.Text.prototype = Object.create(PIXI.Sprite.prototype);
 PIXI.Text.prototype.constructor = PIXI.Text;
+
+
+/**
+ * The width of the sprite, setting this will actually modify the scale to achieve the value set
+ *
+ * @property width
+ * @type Number
+ */
+Object.defineProperty(PIXI.Text.prototype, 'width', {
+    get: function() {
+
+        if(this.dirty)
+        {
+            this.updateText();
+            this.dirty = false;
+        }
+
+
+        return this.scale.x * this.texture.frame.width;
+    },
+    set: function(value) {
+        this.scale.x = value / this.texture.frame.width;
+        this._width = value;
+    }
+});
+
+/**
+ * The height of the Text, setting this will actually modify the scale to achieve the value set
+ *
+ * @property height
+ * @type Number
+ */
+Object.defineProperty(PIXI.Text.prototype, 'height', {
+    get: function() {
+
+        if(this.dirty)
+        {
+            this.updateText();
+            this.dirty = false;
+        }
+
+
+        return  this.scale.y * this.texture.frame.height;
+    },
+    set: function(value) {
+        this.scale.y = value / this.texture.frame.height;
+        this._height = value;
+    }
+});
+
 
 /**
  * Set the style of the text
@@ -4584,7 +4652,7 @@ PIXI.WebGLGraphics.updateGraphics = function(graphics, gl)
             }
             else if(data.type === PIXI.Graphics.RREC)
             {
-                PIXI.WebGLGraphics.buildRoundedRectangle(data, webGL);
+                PIXI.WebGLGraphics.buildRoundedRectangle(data, webGLData);
             }
         }
 
@@ -4708,53 +4776,6 @@ PIXI.WebGLGraphics.buildRectangle = function(graphicsData, webGLData)
  */
 PIXI.WebGLGraphics.buildRoundedRectangle = function(graphicsData, webGLData)
 {
-    /**
-     * Calcul the points for a quadratic bezier curve.
-     * Based on : https://stackoverflow.com/questions/785097/how-do-i-implement-a-bezier-curve-in-c
-     *
-     * @param  {number}   fromX Origin point x
-     * @param  {number}   fromY Origin point x
-     * @param  {number}   cpX   Control point x
-     * @param  {number}   cpY   Control point y
-     * @param  {number}   toX   Destination point x
-     * @param  {number}   toY   Destination point y
-     * @return {number[]}
-     */
-    function quadraticBezierCurve(fromX, fromY, cpX, cpY, toX, toY) {
-        var xa,
-            ya,
-            xb,
-            yb,
-            x,
-            y,
-            n = 20,
-            points = [];
-
-        function getPt(n1 , n2, perc) {
-            var diff = n2 - n1;
-
-            return n1 + ( diff * perc );
-        }
-
-        var j = 0;
-        for (var i = 0; i <= n; i++ )
-        {
-            j = i / n;
-
-            // The Green Line
-            xa = getPt( fromX , cpX , j );
-            ya = getPt( fromY , cpY , j );
-            xb = getPt( cpX , toX , j );
-            yb = getPt( cpY , toY , j );
-
-            // The Black Dot
-            x = getPt( xa , xb , j );
-            y = getPt( ya , yb , j );
-
-            points.push(x, y);
-        }
-        return points;
-    }
 
     var points = graphicsData.points;
     var x = points[0];
@@ -4766,10 +4787,10 @@ PIXI.WebGLGraphics.buildRoundedRectangle = function(graphicsData, webGLData)
 
     var recPoints = [];
     recPoints.push(x, y + radius);
-    recPoints = recPoints.concat(quadraticBezierCurve(x, y + height - radius, x, y + height, x + radius, y + height));
-    recPoints = recPoints.concat(quadraticBezierCurve(x + width - radius, y + height, x + width, y + height, x + width, y + height - radius));
-    recPoints = recPoints.concat(quadraticBezierCurve(x + width, y + radius, x + width, y, x + width - radius, y));
-    recPoints = recPoints.concat(quadraticBezierCurve(x + radius, y, x, y, x, y + radius));
+    recPoints = recPoints.concat(PIXI.WebGLGraphics.quadraticBezierCurve(x, y + height - radius, x, y + height, x + radius, y + height));
+    recPoints = recPoints.concat(PIXI.WebGLGraphics.quadraticBezierCurve(x + width - radius, y + height, x + width, y + height, x + width, y + height - radius));
+    recPoints = recPoints.concat(PIXI.WebGLGraphics.quadraticBezierCurve(x + width, y + radius, x + width, y, x + width - radius, y));
+    recPoints = recPoints.concat(PIXI.WebGLGraphics.quadraticBezierCurve(x + radius, y, x, y, x, y + radius));
 
 
     if (graphicsData.fill) {
@@ -4814,6 +4835,53 @@ PIXI.WebGLGraphics.buildRoundedRectangle = function(graphicsData, webGLData)
     }
 };
 
+/**
+ * Calcul the points for a quadratic bezier curve. (helper function..)
+ * Based on : https://stackoverflow.com/questions/785097/how-do-i-implement-a-bezier-curve-in-c
+ *
+ * @param  {number}   fromX Origin point x
+ * @param  {number}   fromY Origin point x
+ * @param  {number}   cpX   Control point x
+ * @param  {number}   cpY   Control point y
+ * @param  {number}   toX   Destination point x
+ * @param  {number}   toY   Destination point y
+ * @return {number[]}
+ */
+PIXI.WebGLGraphics.quadraticBezierCurve = function(fromX, fromY, cpX, cpY, toX, toY) {
+    var xa,
+        ya,
+        xb,
+        yb,
+        x,
+        y,
+        n = 20,
+        points = [];
+
+    function getPt(n1 , n2, perc) {
+        var diff = n2 - n1;
+
+        return n1 + ( diff * perc );
+    }
+
+    var j = 0;
+    for (var i = 0; i <= n; i++ )
+    {
+        j = i / n;
+
+        // The Green Line
+        xa = getPt( fromX , cpX , j );
+        ya = getPt( fromY , cpY , j );
+        xb = getPt( cpX , toX , j );
+        yb = getPt( cpY , toY , j );
+
+        // The Black Dot
+        x = getPt( xa , xb , j );
+        y = getPt( ya , yb , j );
+
+        points.push(x, y);
+    }
+    return points;
+};
 
 /**
  * Builds a circle to draw
@@ -6457,6 +6525,9 @@ PIXI.WebGLSpriteBatch = function(gl)
     this.setContext(gl);
 
     this.dirty = true;
+
+    this.textures = [];
+    this.blendModes = [];
 };
 
 /**
@@ -6519,15 +6590,14 @@ PIXI.WebGLSpriteBatch.prototype.end = function()
 PIXI.WebGLSpriteBatch.prototype.render = function(sprite)
 {
     var texture = sprite.texture;
-
-    var blendChange = this.renderSession.blendModeManager.currentBlendMode !== sprite.blendMode;
-
+    
+   //TODO set blend modes.. 
     // check texture..
-    if(texture.baseTexture !== this.currentBaseTexture || this.currentBatchSize >= this.size || blendChange)
+    if(this.currentBatchSize >= this.size)
     {
+        //return;
         this.flush();
         this.currentBaseTexture = texture.baseTexture;
-        this.renderSession.blendModeManager.setBlendMode(sprite.blendMode);
     }
 
     // get the uvs for the texture
@@ -6571,7 +6641,7 @@ PIXI.WebGLSpriteBatch.prototype.render = function(sprite)
 
     var index = this.currentBatchSize * 4 * this.vertSize;
 
-    var worldTransform = sprite.worldTransform;//.toArray();
+    var worldTransform = sprite.worldTransform;
 
     var a = worldTransform.a;//[0];
     var b = worldTransform.c;//[3];
@@ -6621,8 +6691,10 @@ PIXI.WebGLSpriteBatch.prototype.render = function(sprite)
     verticies[index++] = tint;
     
     // increment the batchsize
-    this.currentBatchSize++;
+    this.textures[this.currentBatchSize] = sprite.texture.baseTexture;
+    this.blendModes[this.currentBatchSize] = sprite.blendMode;
 
+    this.currentBatchSize++;
 
 };
 
@@ -6636,14 +6708,13 @@ PIXI.WebGLSpriteBatch.prototype.renderTilingSprite = function(tilingSprite)
 {
     var texture = tilingSprite.tilingTexture;
 
-    var blendChange = this.renderSession.blendModeManager.currentBlendMode !== tilingSprite.blendMode;
-
+    
     // check texture..
-    if(texture.baseTexture !== this.currentBaseTexture || this.currentBatchSize >= this.size || blendChange)
+    if(this.currentBatchSize >= this.size)
     {
+        //return;
         this.flush();
         this.currentBaseTexture = texture.baseTexture;
-        this.renderSession.blendModeManager.setBlendMode(tilingSprite.blendMode);
     }
 
      // set the textures uvs temporarily
@@ -6684,8 +6755,8 @@ PIXI.WebGLSpriteBatch.prototype.renderTilingSprite = function(tilingSprite)
     var height = tilingSprite.height;
 
     // TODO trim??
-    var aX = tilingSprite.anchor.x; // - tilingSprite.texture.trim.x
-    var aY = tilingSprite.anchor.y; //- tilingSprite.texture.trim.y
+    var aX = tilingSprite.anchor.x;
+    var aY = tilingSprite.anchor.y;
     var w0 = width * (1-aX);
     var w1 = width * -aX;
 
@@ -6714,7 +6785,7 @@ PIXI.WebGLSpriteBatch.prototype.renderTilingSprite = function(tilingSprite)
     verticies[index++] = tint;
 
     // xy
-    verticies[index++] = a * w0 + c * h1 + tx;
+    verticies[index++] = (a * w0 + c * h1 + tx);
     verticies[index++] = d * h1 + b * w0 + ty;
     // uv
     verticies[index++] = uvs.x1;
@@ -6744,6 +6815,8 @@ PIXI.WebGLSpriteBatch.prototype.renderTilingSprite = function(tilingSprite)
     verticies[index++] = tint;
 
     // increment the batchs
+    this.textures[this.currentBatchSize] = texture.baseTexture;
+    this.blendModes[this.currentBatchSize] = tilingSprite.blendMode;
     this.currentBatchSize++;
 };
 
@@ -6760,10 +6833,9 @@ PIXI.WebGLSpriteBatch.prototype.flush = function()
     if (this.currentBatchSize===0)return;
 
     var gl = this.gl;
-    
+
     this.renderSession.shaderManager.setShader(this.renderSession.shaderManager.defaultShader);
 
-    //TODO - im usre this can be done better - will look to tweak this for 1.7..
     if(this.dirty)
     {
         this.dirty = false;
@@ -6786,15 +6858,6 @@ PIXI.WebGLSpriteBatch.prototype.flush = function()
 
     }
 
-    // bind the current texture
-    gl.bindTexture(gl.TEXTURE_2D, this.currentBaseTexture._glTextures[gl.id] || PIXI.createWebGLTexture(this.currentBaseTexture, gl));
-
-    // check if a texture is dirty..
-    if(this.currentBaseTexture._dirty[gl.id])
-    {
-        PIXI.updateWebGLTexture(this.currentBaseTexture, gl);
-    }
-
     // upload the verts to the buffer  
     if(this.currentBatchSize > ( this.size * 0.5 ) )
     {
@@ -6803,19 +6866,59 @@ PIXI.WebGLSpriteBatch.prototype.flush = function()
     else
     {
         var view = this.vertices.subarray(0, this.currentBatchSize * 4 * this.vertSize);
-
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
     }
 
-   // var view = this.vertices.subarray(0, this.currentBatchSize * 4 * this.vertSize);
-    //gl.bufferSubData(gl.ARRAY_BUFFER, 0, view);
-    
-    // now draw those suckas!
-    gl.drawElements(gl.TRIANGLES, this.currentBatchSize * 6, gl.UNSIGNED_SHORT, 0);
-   
+    var nextTexture, nextBlendMode;
+    var batchSize = 0;
+    var start = 0;
+
+    var currentBaseTexture = null;
+    var currentBlendMode = this.renderSession.blendModeManager.currentBlendMode;
+
+    for (var i = 0, j = this.currentBatchSize; i < j; i++) {
+        
+        nextTexture = this.textures[i];
+        nextBlendMode = this.blendModes[i];
+
+        if(currentBaseTexture !== nextTexture || currentBlendMode !== nextBlendMode)
+        {
+            this.renderBatch(currentBaseTexture, batchSize, start);
+
+            start = i;
+            batchSize = 0;
+            currentBaseTexture = nextTexture;
+            currentBlendMode = nextBlendMode;
+            
+            this.renderSession.blendModeManager.setBlendMode( currentBlendMode );
+        }
+
+        batchSize++;
+    }
+
+    this.renderBatch(currentBaseTexture, batchSize, start);
+
     // then reset the batch!
     this.currentBatchSize = 0;
+};
 
+PIXI.WebGLSpriteBatch.prototype.renderBatch = function(texture, size, startIndex)
+{
+    if(size === 0)return;
+
+    var gl = this.gl;
+    // bind the current texture
+    gl.bindTexture(gl.TEXTURE_2D, texture._glTextures[gl.id] || PIXI.createWebGLTexture(texture, gl));
+
+    // check if a texture is dirty..
+    if(texture._dirty[gl.id])
+    {
+        PIXI.updateWebGLTexture(this.currentBaseTexture, gl);
+    }
+
+    // now draw those suckas!
+    gl.drawElements(gl.TRIANGLES, size * 6, gl.UNSIGNED_SHORT, startIndex * 6 * 2);
+    
     // increment the draw count
     this.renderSession.drawCount++;
 };
@@ -7130,7 +7233,7 @@ PIXI.WebGLFastSpriteBatch.prototype.flush = function()
 
     if(!this.currentBaseTexture._glTextures[gl.id])PIXI.createWebGLTexture(this.currentBaseTexture, gl);
 
-    gl.bindTexture(gl.TEXTURE_2D, this.currentBaseTexture._glTextures[gl.id]);// || PIXI.createWebGLTexture(this.currentBaseTexture, gl));
+    gl.bindTexture(gl.TEXTURE_2D, this.currentBaseTexture._glTextures[gl.id]);
 
     // upload the verts to the buffer
 
@@ -8961,6 +9064,7 @@ PIXI.Graphics.prototype.lineTo = function(x, y)
  * Calculate the points for a quadratic bezier curve.
  * Based on : https://stackoverflow.com/questions/785097/how-do-i-implement-a-bezier-curve-in-c
  *
+ * @method quadraticCurveTo
  * @param  {number}   cpX   Control point x
  * @param  {number}   cpY   Control point y
  * @param  {number}   toX   Destination point x
@@ -8969,13 +9073,15 @@ PIXI.Graphics.prototype.lineTo = function(x, y)
  */
 PIXI.Graphics.prototype.quadraticCurveTo = function(cpX, cpY, toX, toY)
 {
-   // this.currentPath.points.push(toX, toY)
-    //return;
+    if( this.currentPath.points.length === 0)this.moveTo(0,0);
+
     var xa,
     ya,
     n = 20,
     points = this.currentPath.points;
+    if(points.length === 0)this.moveTo(0, 0);
     
+
     var fromX = points[points.length-2];
     var fromY = points[points.length-1];
 
@@ -9000,6 +9106,7 @@ PIXI.Graphics.prototype.quadraticCurveTo = function(cpX, cpY, toX, toY)
 /**
  * Calculate the points for a bezier curve.
  *
+ * @method bezierCurveTo
  * @param  {number}   cpX    Control point x
  * @param  {number}   cpY    Control point y
  * @param  {number}   cpX2   Second Control point x
@@ -9010,6 +9117,8 @@ PIXI.Graphics.prototype.quadraticCurveTo = function(cpX, cpY, toX, toY)
  */
 PIXI.Graphics.prototype.bezierCurveTo = function(cpX, cpY, cpX2, cpY2, toX, toY)
 {
+    if( this.currentPath.points.length === 0)this.moveTo(0,0);
+
     var n = 20,
     dt,
     dt2,
@@ -9045,17 +9154,24 @@ PIXI.Graphics.prototype.bezierCurveTo = function(cpX, cpY, cpX2, cpY2, toX, toY)
 };
 
 /*
- * arcTo() 
- *
+ * the arcTo() method creates an arc/curve between two tangents on the canvas.
+ * 
  * "borrowed" from https://code.google.com/p/fxcanvas/ - thanks google!
+ *
+ * @method arcTo
+ * @param  {number}   x1        The x-coordinate of the beginning of the arc
+ * @param  {number}   y1        The y-coordinate of the beginning of the arc
+ * @param  {number}   x2        The x-coordinate of the end of the arc
+ * @param  {number}   y2        The y-coordinate of the end of the arc
+ * @param  {number}   radius    The radius of the arc
+ * @return {PIXI.Graphics}
  */
 PIXI.Graphics.prototype.arcTo = function(x1, y1, x2, y2, radius)
 {
     // check that path contains subpaths
-    //if (path.commands.length == 0)
-//        moveTo(x1, y1);
+    if( this.currentPath.points.length === 0)this.moveTo(x1, y1);
+    
     var points = this.currentPath.points;
-
     var fromX = points[points.length-2];
     var fromY = points[points.length-1];
 
@@ -9098,24 +9214,30 @@ PIXI.Graphics.prototype.arcTo = function(x1, y1, x2, y2, radius)
     return this;
 };
 
-/*
- * Arc init! TODO add docs
+/**
+ * The arc() method creates an arc/curve (used to create circles, or parts of circles).
+ *
+ * @method arc
+ * @param  {number}   cx                The x-coordinate of the center of the circle
+ * @param  {number}   cy                The y-coordinate of the center of the circle
+ * @param  {number}   radius            The radius of the circle
+ * @param  {number}   startAngle        The starting angle, in radians (0 is at the 3 o'clock position of the arc's circle)
+ * @param  {number}   endAngle          The ending angle, in radians
+ * @param  {number}   anticlockwise     Optional. Specifies whether the drawing should be counterclockwise or clockwise. False is default, and indicates clockwise, while true indicates counter-clockwise.
+ * @return {PIXI.Graphics}
  */
 PIXI.Graphics.prototype.arc = function(cx, cy, radius, startAngle, endAngle, anticlockwise)
 {
     var startX = cx + Math.cos(startAngle) * radius;
     var startY = cy + Math.sin(startAngle) * radius;
-
-    // check that path contains subpaths
-   // if (path.commands.length == 0)
-     //   this.moveTo(startX, startY);
-   // else
-    var points = this.currentPath.points;
     
-    var fromX = points[points.length-2];
-    var fromY = points[points.length-1];
+    var points = this.currentPath.points;
 
-    if(fromX !== startX || fromY !== startY) points.push(startX, startY);
+    if(points.length !== 0 && points[points.length-2] !== startX || points[points.length-1] !== startY)
+    {
+        this.moveTo(startX, startY);
+        points = this.currentPath.points;
+    }
 
     if (startAngle === endAngle)return this;
 
@@ -9139,12 +9261,15 @@ PIXI.Graphics.prototype.arc = function(cx, cy, radius, startAngle, endAngle, ant
     var cTheta = Math.cos(theta);
     var sTheta = Math.sin(theta);
     
-    var remainder = ( segs % 1 ) / segs;
+    var segMinus = segs - 1;
 
-    for(var i=0; i<=segs; i++)
+    var remainder = ( segMinus % 1 ) / segMinus;
+
+    for(var i=0; i<=segMinus; i++)
     {
         var real =  i + remainder * i;
 
+    
         var angle = ((theta) + startAngle + (theta2 * real));
 
         var c = Math.cos(angle);
@@ -10141,7 +10266,7 @@ PIXI.TilingSprite = function(texture, width, height)
      * @property width
      * @type Number
      */
-    this.width = width || 100;
+    this._width = width || 100;
 
     /**
      * The height of the tiling sprite
@@ -10149,7 +10274,7 @@ PIXI.TilingSprite = function(texture, width, height)
      * @property height
      * @type Number
      */
-    this.height = height || 100;
+    this._height = height || 100;
 
     /**
      * The scaling of the image that is being tiled
@@ -10201,6 +10326,9 @@ PIXI.TilingSprite = function(texture, width, height)
      * @default PIXI.blendModes.NORMAL;
      */
     this.blendMode = PIXI.blendModes.NORMAL;
+
+    
+
 };
 
 // constructor
@@ -10260,21 +10388,22 @@ PIXI.TilingSprite.prototype.setTexture = function(texture)
 PIXI.TilingSprite.prototype._renderWebGL = function(renderSession)
 {
     if (this.visible === false || this.alpha === 0) return;
-    
     var i,j;
 
-    if (this.mask)
+    if (this._mask)
     {
         renderSession.spriteBatch.stop();
         renderSession.maskManager.pushMask(this.mask, renderSession);
         renderSession.spriteBatch.start();
     }
 
-    if (this.filters)
+    if (this._filters)
     {
         renderSession.spriteBatch.flush();
         renderSession.filterManager.pushFilter(this._filterBlock);
     }
+
+   
 
     if (!this.tilingTexture || this.refreshTexture)
     {
@@ -10292,7 +10421,6 @@ PIXI.TilingSprite.prototype._renderWebGL = function(renderSession)
     {
         renderSession.spriteBatch.renderTilingSprite(this);
     }
-
     // simple render children!
     for (i=0,j=this.children.length; i<j; i++)
     {
@@ -10301,8 +10429,8 @@ PIXI.TilingSprite.prototype._renderWebGL = function(renderSession)
 
     renderSession.spriteBatch.stop();
 
-    if (this.filters) renderSession.filterManager.popFilter();
-    if (this.mask) renderSession.maskManager.popMask(renderSession);
+    if (this._filters) renderSession.filterManager.popFilter();
+    if (this._mask) renderSession.maskManager.popMask(renderSession);
     
     renderSession.spriteBatch.start();
 };
@@ -10464,6 +10592,21 @@ PIXI.TilingSprite.prototype.getBounds = function()
 
     return bounds;
 };
+
+
+
+/**
+ * When the texture is updated, this event will fire to update the scale and frame
+ *
+ * @method onTextureUpdate
+ * @param event
+ * @private
+ */
+PIXI.TilingSprite.prototype.onTextureUpdate = function()
+{
+   // overriding the sprite version of this!
+};
+
 
 /**
 * 
@@ -11183,7 +11326,7 @@ PIXI.RenderTexture = function(width, height, renderer, scaleMode)
      * @property crop
      * @type Rectangle
      */
-    this.crop = new PIXI.Rectangle(0, 0, 1, 1);
+    this.crop = new PIXI.Rectangle(0, 0, this.width, this.height);
     
     /**
      * The base texture object that this texture uses
@@ -11220,6 +11363,7 @@ PIXI.RenderTexture = function(width, height, renderer, scaleMode)
         this.baseTexture.source = this.textureBuffer.canvas;
     }
 
+    this.valid = true;
     PIXI.Texture.frameUpdates.push(this);
 
 
@@ -11243,11 +11387,8 @@ PIXI.RenderTexture.prototype.resize = function(width, height, updateBase)
         return;
     }
 
-    this.width = width;
-    this.height = height;
-
-    this.frame.width = this.width;
-    this.frame.height = this.height;
+    this.width = this.frame.width = this.crop.width = width;
+    this.height =  this.frame.height = this.crop.height = height;
 
     if (updateBase)
     {
@@ -11391,7 +11532,7 @@ PIXI.RenderTexture.tempMatrix = new PIXI.Matrix();
         }
         exports.PIXI = PIXI;
     } else if (typeof define !== 'undefined' && define.amd) {
-        define(PIXI);
+        define('PIXI', (function() { return root.PIXI = PIXI; })() );
     } else {
         root.PIXI = PIXI;
     }

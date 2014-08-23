@@ -1,129 +1,129 @@
 /* jshint camelcase: false */
 /**
- * @author       Richard Davey <rich@photonstorm.com>
- * @copyright    2014 Photon Storm Ltd.
- * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
- */
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2014 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
 
 /**
- * Ninja Physics Tile constructor.
- * A Tile is defined by its width, height and type. It's type can include slope data, such as 45 degree slopes, or convex slopes.
- * Understand that for any type including a slope (types 2 to 29) the Tile must be SQUARE, i.e. have an equal width and height.
- * Also note that as Tiles are primarily used for levels they have gravity disabled and world bounds collision disabled by default.
- *
- * Note: This class could be massively optimised and reduced in size. I leave that challenge up to you.
- *
- * @class Phaser.Physics.Ninja.Tile
- * @classdesc The Ninja Physics Tile class. Based on code by Metanet Software.
- * @constructor
- * @param {Phaser.Physics.Ninja.Body} body - The body that owns this shape.
- * @param {number} x - The x coordinate to create this shape at.
- * @param {number} y - The y coordinate to create this shape at.
- * @param {number} width - The width of this AABB.
- * @param {number} height - The height of this AABB.
- * @param {number} [type=1] - The type of Ninja shape to create. 1 = AABB, 2 = Circle or 3 = Tile.
- */
+* Ninja Physics Tile constructor.
+* A Tile is defined by its width, height and type. It's type can include slope data, such as 45 degree slopes, or convex slopes.
+* Understand that for any type including a slope (types 2 to 29) the Tile must be SQUARE, i.e. have an equal width and height.
+* Also note that as Tiles are primarily used for levels they have gravity disabled and world bounds collision disabled by default.
+*
+* Note: This class could be massively optimised and reduced in size. I leave that challenge up to you.
+*
+* @class Phaser.Physics.Ninja.Tile
+* @classdesc The Ninja Physics Tile class. Based on code by Metanet Software.
+* @constructor
+* @param {Phaser.Physics.Ninja.Body} body - The body that owns this shape.
+* @param {number} x - The x coordinate to create this shape at.
+* @param {number} y - The y coordinate to create this shape at.
+* @param {number} width - The width of this AABB.
+* @param {number} height - The height of this AABB.
+* @param {number} [type=1] - The type of Ninja shape to create. 1 = AABB, 2 = Circle or 3 = Tile.
+*/
 Phaser.Physics.Ninja.Tile = function (body, x, y, width, height, type) {
 
-    if (typeof type === 'undefined') {
-        type = Phaser.Physics.Ninja.Tile.EMPTY;
-    }
+    if (typeof type === 'undefined') { type = Phaser.Physics.Ninja.Tile.EMPTY; }
 
     /**
-     * @property {Phaser.Physics.Ninja.Body} system - A reference to the body that owns this shape.
-     */
+    * @property {Phaser.Physics.Ninja.Body} system - A reference to the body that owns this shape.
+    */
     this.body = body;
 
     /**
-     * @property {Phaser.Physics.Ninja} system - A reference to the physics system.
-     */
+    * @property {Phaser.Physics.Ninja} system - A reference to the physics system.
+    */
     this.system = body.system;
 
     /**
-     * @property {number} id - The ID of this Tile.
-     * @readonly
-     */
+    * @property {number} id - The ID of this Tile.
+    * @readonly
+    */
     this.id = type;
 
     /**
-     * @property {number} type - The type of this Tile.
-     * @readonly
-     */
+    * @property {number} type - The type of this Tile.
+    * @readonly
+    */
     this.type = Phaser.Physics.Ninja.Tile.TYPE_EMPTY;
 
     /**
-     * @property {Phaser.Point} pos - The position of this object.
-     */
+    * @property {Phaser.Point} pos - The position of this object.
+    */
     this.pos = new Phaser.Point(x, y);
 
     /**
-     * @property {Phaser.Point} oldpos - The position of this object in the previous update.
-     */
+    * @property {Phaser.Point} oldpos - The position of this object in the previous update.
+    */
     this.oldpos = new Phaser.Point(x, y);
 
-    if (this.id > 1 && this.id < 30) {
-        //  Tile Types 2 to 29 require square-bv tile dimensions, so use the width as the base
+    if (this.id > 1 && this.id < 30)
+    {
+        //  Tile Types 2 to 29 require square tile dimensions, so use the width as the base
         height = width;
     }
 
     /**
-     * @property {number} xw - Half the width.
-     * @readonly
-     */
+    * @property {number} xw - Half the width.
+    * @readonly
+    */
     this.xw = Math.abs(width / 2);
 
     /**
-     * @property {number} xw - Half the height.
-     * @readonly
-     */
+    * @property {number} xw - Half the height.
+    * @readonly
+    */
     this.yw = Math.abs(height / 2);
 
     /**
-     * @property {number} width - The width.
-     * @readonly
-     */
+    * @property {number} width - The width.
+    * @readonly
+    */
     this.width = width;
 
     /**
-     * @property {number} height - The height.
-     * @readonly
-     */
+    * @property {number} height - The height.
+    * @readonly
+    */
     this.height = height;
 
     /**
-     * @property {Phaser.Point} velocity - The velocity of this object.
-     */
+    * @property {Phaser.Point} velocity - The velocity of this object.
+    */
     this.velocity = new Phaser.Point();
 
     /**
-     * @property {number} signx - Internal var.
-     * @private
-     */
+    * @property {number} signx - Internal var.
+    * @private
+    */
     this.signx = 0;
 
     /**
-     * @property {number} signy - Internal var.
-     * @private
-     */
+    * @property {number} signy - Internal var.
+    * @private
+    */
     this.signy = 0;
 
     /**
-     * @property {number} sx - Internal var.
-     * @private
-     */
+    * @property {number} sx - Internal var.
+    * @private
+    */
     this.sx = 0;
 
     /**
-     * @property {number} sy - Internal var.
-     * @private
-     */
+    * @property {number} sy - Internal var.
+    * @private
+    */
     this.sy = 0;
 
     //  By default Tiles disable gravity and world bounds collision
     this.body.gravityScale = 0;
     this.body.collideWorldBounds = false;
 
-    if (this.id > 0) {
+    if (this.id > 0)
+    {
         this.setType(this.id);
     }
 
@@ -134,10 +134,10 @@ Phaser.Physics.Ninja.Tile.prototype.constructor = Phaser.Physics.Ninja.Tile;
 Phaser.Physics.Ninja.Tile.prototype = {
 
     /**
-     * Updates this objects position.
-     *
-     * @method Phaser.Physics.Ninja.Tile#integrate
-     */
+    * Updates this objects position.
+    *
+    * @method Phaser.Physics.Ninja.Tile#integrate
+    */
     integrate: function () {
 
         var px = this.pos.x;
@@ -152,34 +152,40 @@ Phaser.Physics.Ninja.Tile.prototype = {
     },
 
     /**
-     * Tiles cannot collide with the world bounds, it's up to you to keep them where you want them. But we need this API stub to satisfy the Body.
-     *
-     * @method Phaser.Physics.Ninja.Tile#collideWorldBounds
-     */
+    * Tiles cannot collide with the world bounds, it's up to you to keep them where you want them. But we need this API stub to satisfy the Body.
+    *
+    * @method Phaser.Physics.Ninja.Tile#collideWorldBounds
+    */
     collideWorldBounds: function () {
 
         var dx = this.system.bounds.x - (this.pos.x - this.xw);
 
-        if (0 < dx) {
+        if (0 < dx)
+        {
             this.reportCollisionVsWorld(dx, 0, 1, 0, null);
         }
-        else {
+        else
+        {
             dx = (this.pos.x + this.xw) - this.system.bounds.right;
 
-            if (0 < dx) {
+            if (0 < dx)
+            {
                 this.reportCollisionVsWorld(-dx, 0, -1, 0, null);
             }
         }
 
         var dy = this.system.bounds.y - (this.pos.y - this.yw);
 
-        if (0 < dy) {
+        if (0 < dy)
+        {
             this.reportCollisionVsWorld(0, dy, 0, 1, null);
         }
-        else {
+        else
+        {
             dy = (this.pos.y + this.yw) - this.system.bounds.bottom;
 
-            if (0 < dy) {
+            if (0 < dy)
+            {
                 this.reportCollisionVsWorld(0, -dy, 0, -1, null);
             }
         }
@@ -187,15 +193,15 @@ Phaser.Physics.Ninja.Tile.prototype = {
     },
 
     /**
-     * Process a world collision and apply the resulting forces.
-     *
-     * @method Phaser.Physics.Ninja.Tile#reportCollisionVsWorld
-     * @param {number} px - The tangent velocity
-     * @param {number} py - The tangent velocity
-     * @param {number} dx - Collision normal
-     * @param {number} dy - Collision normal
-     * @param {number} obj - Object this Tile collided with
-     */
+    * Process a world collision and apply the resulting forces.
+    *
+    * @method Phaser.Physics.Ninja.Tile#reportCollisionVsWorld
+    * @param {number} px - The tangent velocity
+    * @param {number} py - The tangent velocity
+    * @param {number} dx - Collision normal
+    * @param {number} dy - Collision normal
+    * @param {number} obj - Object this Tile collided with
+    */
     reportCollisionVsWorld: function (px, py, dx, dy) {
         var p = this.pos;
         var o = this.oldpos;
@@ -216,7 +222,8 @@ Phaser.Physics.Ninja.Tile.prototype = {
         //  We only want to apply collision response forces if the object is travelling into, and not out of, the collision
         var b, bx, by, fx, fy;
 
-        if (dp < 0) {
+        if (dp < 0)
+        {
             fx = tx * this.body.friction;
             fy = ty * this.body.friction;
 
@@ -225,21 +232,26 @@ Phaser.Physics.Ninja.Tile.prototype = {
             bx = (nx * b);
             by = (ny * b);
 
-            if (dx === 1) {
+            if (dx === 1)
+            {
                 this.body.touching.left = true;
             }
-            else if (dx === -1) {
+            else if (dx === -1)
+            {
                 this.body.touching.right = true;
             }
 
-            if (dy === 1) {
+            if (dy === 1)
+            {
                 this.body.touching.up = true;
             }
-            else if (dy === -1) {
+            else if (dy === -1)
+            {
                 this.body.touching.down = true;
             }
         }
-        else {
+        else
+        {
             //  Moving out of collision, do not apply forces
             bx = by = fx = fy = 0;
         }
@@ -255,17 +267,19 @@ Phaser.Physics.Ninja.Tile.prototype = {
     },
 
     /**
-     * Tiles cannot collide with the world bounds, it's up to you to keep them where you want them. But we need this API stub to satisfy the Body.
-     *
-     * @method Phaser.Physics.Ninja.Tile#setType
-     * @param {number} id - The type of Tile this will use, i.e. Phaser.Physics.Ninja.Tile.SLOPE_45DEGpn, Phaser.Physics.Ninja.Tile.CONVEXpp, etc.
-     */
+    * Tiles cannot collide with the world bounds, it's up to you to keep them where you want them. But we need this API stub to satisfy the Body.
+    *
+    * @method Phaser.Physics.Ninja.Tile#setType
+    * @param {number} id - The type of Tile this will use, i.e. Phaser.Physics.Ninja.Tile.SLOPE_45DEGpn, Phaser.Physics.Ninja.Tile.CONVEXpp, etc.
+    */
     setType: function (id) {
 
-        if (id === Phaser.Physics.Ninja.Tile.EMPTY) {
+        if (id === Phaser.Physics.Ninja.Tile.EMPTY)
+        {
             this.clear();
         }
-        else {
+        else
+        {
             this.id = id;
             this.updateType();
         }
@@ -275,10 +289,10 @@ Phaser.Physics.Ninja.Tile.prototype = {
     },
 
     /**
-     * Sets this tile to be empty.
-     *
-     * @method Phaser.Physics.Ninja.Tile#clear
-     */
+    * Sets this tile to be empty.
+    *
+    * @method Phaser.Physics.Ninja.Tile#clear
+    */
     clear: function () {
 
         this.id = Phaser.Physics.Ninja.Tile.EMPTY;
@@ -287,10 +301,10 @@ Phaser.Physics.Ninja.Tile.prototype = {
     },
 
     /**
-     * Destroys this Tiles reference to Body and System.
-     *
-     * @method Phaser.Physics.Ninja.Tile#destroy
-     */
+    * Destroys this Tiles reference to Body and System.
+    *
+    * @method Phaser.Physics.Ninja.Tile#destroy
+    */
     destroy: function () {
 
         this.body = null;
@@ -299,15 +313,16 @@ Phaser.Physics.Ninja.Tile.prototype = {
     },
 
     /**
-     * This converts a tile from implicitly-defined (via id), to explicit (via properties).
-     * Don't call directly, instead of setType.
-     *
-     * @method Phaser.Physics.Ninja.Tile#updateType
-     * @private
-     */
+    * This converts a tile from implicitly-defined (via id), to explicit (via properties).
+    * Don't call directly, instead of setType.
+    *
+    * @method Phaser.Physics.Ninja.Tile#updateType
+    * @private
+    */
     updateType: function () {
 
-        if (this.id === 0) {
+        if (this.id === 0)
+        {
             //EMPTY
             this.type = Phaser.Physics.Ninja.Tile.TYPE_EMPTY;
             this.signx = 0;
@@ -319,7 +334,8 @@ Phaser.Physics.Ninja.Tile.prototype = {
         }
 
         //tile is non-empty; collide
-        if (this.id < Phaser.Physics.Ninja.Tile.TYPE_45DEG) {
+        if (this.id < Phaser.Physics.Ninja.Tile.TYPE_45DEG)
+        {
             //FULL
             this.type = Phaser.Physics.Ninja.Tile.TYPE_FULL;
             this.signx = 0;
@@ -327,275 +343,323 @@ Phaser.Physics.Ninja.Tile.prototype = {
             this.sx = 0;
             this.sy = 0;
         }
-        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_CONCAVE) {
+        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_CONCAVE)
+        {
             //  45deg
             this.type = Phaser.Physics.Ninja.Tile.TYPE_45DEG;
 
-            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_45DEGpn) {
+            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_45DEGpn)
+            {
                 this.signx = 1;
                 this.signy = -1;
                 this.sx = this.signx / Math.SQRT2;//get slope _unit_ normal
                 this.sy = this.signy / Math.SQRT2;//since normal is (1,-1), length is sqrt(1*1 + -1*-1) = sqrt(2)
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_45DEGnn) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_45DEGnn)
+            {
                 this.signx = -1;
                 this.signy = -1;
                 this.sx = this.signx / Math.SQRT2;//get slope _unit_ normal
                 this.sy = this.signy / Math.SQRT2;//since normal is (1,-1), length is sqrt(1*1 + -1*-1) = sqrt(2)
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_45DEGnp) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_45DEGnp)
+            {
                 this.signx = -1;
                 this.signy = 1;
                 this.sx = this.signx / Math.SQRT2;//get slope _unit_ normal
                 this.sy = this.signy / Math.SQRT2;//since normal is (1,-1), length is sqrt(1*1 + -1*-1) = sqrt(2)
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_45DEGpp) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_45DEGpp)
+            {
                 this.signx = 1;
                 this.signy = 1;
                 this.sx = this.signx / Math.SQRT2;//get slope _unit_ normal
                 this.sy = this.signy / Math.SQRT2;//since normal is (1,-1), length is sqrt(1*1 + -1*-1) = sqrt(2)
             }
-            else {
+            else
+            {
                 return false;
             }
         }
-        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_CONVEX) {
+        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_CONVEX)
+        {
             //  Concave
             this.type = Phaser.Physics.Ninja.Tile.TYPE_CONCAVE;
 
-            if (this.id == Phaser.Physics.Ninja.Tile.CONCAVEpn) {
+            if (this.id == Phaser.Physics.Ninja.Tile.CONCAVEpn)
+            {
                 this.signx = 1;
                 this.signy = -1;
                 this.sx = 0;
                 this.sy = 0;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.CONCAVEnn) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.CONCAVEnn)
+            {
                 this.signx = -1;
                 this.signy = -1;
                 this.sx = 0;
                 this.sy = 0;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.CONCAVEnp) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.CONCAVEnp)
+            {
                 this.signx = -1;
                 this.signy = 1;
                 this.sx = 0;
                 this.sy = 0;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.CONCAVEpp) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.CONCAVEpp)
+            {
                 this.signx = 1;
                 this.signy = 1;
                 this.sx = 0;
                 this.sy = 0;
             }
-            else {
+            else
+            {
                 return false;
             }
         }
-        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_22DEGs) {
+        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_22DEGs)
+        {
             //  Convex
             this.type = Phaser.Physics.Ninja.Tile.TYPE_CONVEX;
 
-            if (this.id == Phaser.Physics.Ninja.Tile.CONVEXpn) {
+            if (this.id == Phaser.Physics.Ninja.Tile.CONVEXpn)
+            {
                 this.signx = 1;
                 this.signy = -1;
                 this.sx = 0;
                 this.sy = 0;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.CONVEXnn) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.CONVEXnn)
+            {
                 this.signx = -1;
                 this.signy = -1;
                 this.sx = 0;
                 this.sy = 0;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.CONVEXnp) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.CONVEXnp)
+            {
                 this.signx = -1;
                 this.signy = 1;
                 this.sx = 0;
                 this.sy = 0;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.CONVEXpp) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.CONVEXpp)
+            {
                 this.signx = 1;
                 this.signy = 1;
                 this.sx = 0;
                 this.sy = 0;
             }
-            else {
+            else
+            {
                 return false;
             }
         }
-        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_22DEGb) {
+        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_22DEGb)
+        {
             //  22deg small
             this.type = Phaser.Physics.Ninja.Tile.TYPE_22DEGs;
 
-            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGpnS) {
+            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGpnS)
+            {
                 this.signx = 1;
                 this.signy = -1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 1) / slen;
                 this.sy = (this.signy * 2) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGnnS) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGnnS)
+            {
                 this.signx = -1;
                 this.signy = -1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 1) / slen;
                 this.sy = (this.signy * 2) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGnpS) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGnpS)
+            {
                 this.signx = -1;
                 this.signy = 1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 1) / slen;
                 this.sy = (this.signy * 2) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGppS) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGppS)
+            {
                 this.signx = 1;
                 this.signy = 1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 1) / slen;
                 this.sy = (this.signy * 2) / slen;
             }
-            else {
+            else
+            {
                 return false;
             }
         }
-        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_67DEGs) {
+        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_67DEGs)
+        {
             //  22deg big
             this.type = Phaser.Physics.Ninja.Tile.TYPE_22DEGb;
 
-            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGpnB) {
+            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGpnB)
+            {
                 this.signx = 1;
                 this.signy = -1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 1) / slen;
                 this.sy = (this.signy * 2) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGnnB) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGnnB)
+            {
                 this.signx = -1;
                 this.signy = -1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 1) / slen;
                 this.sy = (this.signy * 2) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGnpB) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGnpB)
+            {
                 this.signx = -1;
                 this.signy = 1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 1) / slen;
                 this.sy = (this.signy * 2) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGppB) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_22DEGppB)
+            {
                 this.signx = 1;
                 this.signy = 1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 1) / slen;
                 this.sy = (this.signy * 2) / slen;
             }
-            else {
+            else
+            {
                 return false;
             }
         }
-        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_67DEGb) {
+        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_67DEGb)
+        {
             //  67deg small
             this.type = Phaser.Physics.Ninja.Tile.TYPE_67DEGs;
 
-            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGpnS) {
+            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGpnS)
+            {
                 this.signx = 1;
                 this.signy = -1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 2) / slen;
                 this.sy = (this.signy * 1) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGnnS) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGnnS)
+            {
                 this.signx = -1;
                 this.signy = -1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 2) / slen;
                 this.sy = (this.signy * 1) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGnpS) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGnpS)
+            {
                 this.signx = -1;
                 this.signy = 1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 2) / slen;
                 this.sy = (this.signy * 1) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGppS) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGppS)
+            {
                 this.signx = 1;
                 this.signy = 1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 2) / slen;
                 this.sy = (this.signy * 1) / slen;
             }
-            else {
+            else
+            {
                 return false;
             }
         }
-        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_HALF) {
+        else if (this.id < Phaser.Physics.Ninja.Tile.TYPE_HALF)
+        {
             //  67deg big
             this.type = Phaser.Physics.Ninja.Tile.TYPE_67DEGb;
 
-            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGpnB) {
+            if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGpnB)
+            {
                 this.signx = 1;
                 this.signy = -1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 2) / slen;
                 this.sy = (this.signy * 1) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGnnB) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGnnB)
+            {
                 this.signx = -1;
                 this.signy = -1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 2) / slen;
                 this.sy = (this.signy * 1) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGnpB) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGnpB)
+            {
                 this.signx = -1;
                 this.signy = 1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 2) / slen;
                 this.sy = (this.signy * 1) / slen;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGppB) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.SLOPE_67DEGppB)
+            {
                 this.signx = 1;
                 this.signy = 1;
                 var slen = Math.sqrt(2 * 2 + 1 * 1);
                 this.sx = (this.signx * 2) / slen;
                 this.sy = (this.signy * 1) / slen;
             }
-            else {
+            else
+            {
                 return false;
             }
         }
-        else {
+        else
+        {
             //  Half-full tile
             this.type = Phaser.Physics.Ninja.Tile.TYPE_HALF;
 
-            if (this.id == Phaser.Physics.Ninja.Tile.HALFd) {
+            if (this.id == Phaser.Physics.Ninja.Tile.HALFd)
+            {
                 this.signx = 0;
                 this.signy = -1;
                 this.sx = this.signx;
                 this.sy = this.signy;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.HALFu) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.HALFu)
+            {
                 this.signx = 0;
                 this.signy = 1;
                 this.sx = this.signx;
                 this.sy = this.signy;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.HALFl) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.HALFl)
+            {
                 this.signx = 1;
                 this.signy = 0;
                 this.sx = this.signx;
                 this.sy = this.signy;
             }
-            else if (this.id == Phaser.Physics.Ninja.Tile.HALFr) {
+            else if (this.id == Phaser.Physics.Ninja.Tile.HALFr)
+            {
                 this.signx = -1;
                 this.signy = 0;
                 this.sx = this.signx;
                 this.sy = this.signy;
             }
-            else {
+            else
+            {
                 return false;
             }
         }
@@ -604,9 +668,9 @@ Phaser.Physics.Ninja.Tile.prototype = {
 };
 
 /**
- * @name Phaser.Physics.Ninja.Tile#x
- * @property {number} x - The x position.
- */
+* @name Phaser.Physics.Ninja.Tile#x
+* @property {number} x - The x position.
+*/
 Object.defineProperty(Phaser.Physics.Ninja.Tile.prototype, "x", {
 
     get: function () {
@@ -620,9 +684,9 @@ Object.defineProperty(Phaser.Physics.Ninja.Tile.prototype, "x", {
 });
 
 /**
- * @name Phaser.Physics.Ninja.Tile#y
- * @property {number} y - The y position.
- */
+* @name Phaser.Physics.Ninja.Tile#y
+* @property {number} y - The y position.
+*/
 Object.defineProperty(Phaser.Physics.Ninja.Tile.prototype, "y", {
 
     get: function () {
@@ -636,10 +700,10 @@ Object.defineProperty(Phaser.Physics.Ninja.Tile.prototype, "y", {
 });
 
 /**
- * @name Phaser.Physics.Ninja.Tile#bottom
- * @property {number} bottom - The bottom value of this Body (same as Body.y + Body.height)
- * @readonly
- */
+* @name Phaser.Physics.Ninja.Tile#bottom
+* @property {number} bottom - The bottom value of this Body (same as Body.y + Body.height)
+* @readonly
+*/
 Object.defineProperty(Phaser.Physics.Ninja.Tile.prototype, "bottom", {
 
     get: function () {
@@ -649,10 +713,10 @@ Object.defineProperty(Phaser.Physics.Ninja.Tile.prototype, "bottom", {
 });
 
 /**
- * @name Phaser.Physics.Ninja.Tile#right
- * @property {number} right - The right value of this Body (same as Body.x + Body.width)
- * @readonly
- */
+* @name Phaser.Physics.Ninja.Tile#right
+* @property {number} right - The right value of this Body (same as Body.x + Body.width)
+* @readonly
+*/
 Object.defineProperty(Phaser.Physics.Ninja.Tile.prototype, "right", {
 
     get: function () {

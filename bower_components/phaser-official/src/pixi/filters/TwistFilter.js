@@ -8,17 +8,16 @@
  * @class TwistFilter
  * @contructor
  */
-PIXI.TwistFilter = function()
-{
-    PIXI.AbstractFilter.call( this );
+PIXI.TwistFilter = function () {
+    PIXI.AbstractFilter.call(this);
 
     this.passes = [this];
 
     // set the uniforms
     this.uniforms = {
-        radius: {type: '1f', value:0.5},
-        angle: {type: '1f', value:5},
-        offset: {type: '2f', value:{x:0.5, y:0.5}},
+        radius: {type: '1f', value: 0.5},
+        angle: {type: '1f', value: 5},
+        offset: {type: '2f', value: {x: 0.5, y: 0.5}}
     };
 
     this.fragmentSrc = [
@@ -49,7 +48,7 @@ PIXI.TwistFilter = function()
     ];
 };
 
-PIXI.TwistFilter.prototype = Object.create( PIXI.AbstractFilter.prototype );
+PIXI.TwistFilter.prototype = Object.create(PIXI.AbstractFilter.prototype);
 PIXI.TwistFilter.prototype.constructor = PIXI.TwistFilter;
 
 /**
@@ -59,10 +58,10 @@ PIXI.TwistFilter.prototype.constructor = PIXI.TwistFilter;
  * @type Point
  */
 Object.defineProperty(PIXI.TwistFilter.prototype, 'offset', {
-    get: function() {
+    get: function () {
         return this.uniforms.offset.value;
     },
-    set: function(value) {
+    set: function (value) {
         this.dirty = true;
         this.uniforms.offset.value = value;
     }
@@ -75,10 +74,10 @@ Object.defineProperty(PIXI.TwistFilter.prototype, 'offset', {
  * @type Number
  */
 Object.defineProperty(PIXI.TwistFilter.prototype, 'radius', {
-    get: function() {
+    get: function () {
         return this.uniforms.radius.value;
     },
-    set: function(value) {
+    set: function (value) {
         this.dirty = true;
         this.uniforms.radius.value = value;
     }
@@ -91,10 +90,10 @@ Object.defineProperty(PIXI.TwistFilter.prototype, 'radius', {
  * @type Number
  */
 Object.defineProperty(PIXI.TwistFilter.prototype, 'angle', {
-    get: function() {
+    get: function () {
         return this.uniforms.angle.value;
     },
-    set: function(value) {
+    set: function (value) {
         this.dirty = true;
         this.uniforms.angle.value = value;
     }
